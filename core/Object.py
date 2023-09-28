@@ -1,4 +1,5 @@
 from core.objLoaderV4 import ObjLoader
+from core.Interval import *
 from OpenGL.GL import *
 import numpy as np
 import math
@@ -93,13 +94,13 @@ class Object:
     
     def enable(self):
         glUseProgram(self.shader.id)
-        glBindVertexArray(self.vbo)
+        glBindVertexArray(self.vao)
 
     def disable(self):
         glUseProgram(0)
         glBindVertexArray(0)
 
-    def draw(self):
+    def draw(self, interval: Interval):
         self.enable()
         glDrawArrays(GL_TRIANGLES, 0, self.n_vertices)
         self.disable()
