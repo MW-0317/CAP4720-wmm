@@ -1,9 +1,10 @@
 from core.objLoaderV4 import ObjLoader
-from core.Interval import *
+import core.Interval as Interval
 from OpenGL.GL import *
 import numpy as np
 import math
 import sys
+import pyrr
 
 class Object:
     def __init__(self, file, shader):
@@ -77,6 +78,8 @@ class Object:
 
         self.disable()
 
+        self.position = [0, 0, 0]
+
     def __del__(self):
         self.delete()
 
@@ -92,6 +95,12 @@ class Object:
                 for i in range(0, 3)]))
         return diameter
     
+    def set_position(self, position: list[float, float, float]):
+        self.position = position
+
+    def get_model_matrix(self) -> pyrr.Matrix44:
+        return pyrr.matrix44.create_from_translation(pyrr.Vector3(self.position) - pyrr.Vector3(self.center))
+    
     def enable(self):
         glUseProgram(self.shader.id)
         glBindVertexArray(self.vao)
@@ -100,8 +109,16 @@ class Object:
         glUseProgram(0)
         glBindVertexArray(0)
 
-    def draw(self, interval: Interval):
+    def draw(self, interval: Interval.Interval):
         self.enable()
+        model_loc       = glGetUniformLocation(self.shader.id, "model_matrix")
+        view_loc        = glGetUniformLocation(self.shader.id, "view_matrix")
+        projection_loc  = glGetUniformLocation(self.shader.id, "projection_matrix")
+
+        glUniformMatrix4fv(model_loc,       1, GL_FALSE, self.get_model_matrix())
+        glUniformMatrix4fv(view_loc,        1, GL_FALSE, interval.camera.get_view_matrix())
+        glUniformMatrix4fv(projection_loc,  1, GL_FALSE, interval.camera.get_projection_matrix())
+
         glDrawArrays(GL_TRIANGLES, 0, self.n_vertices)
         self.disable()
 

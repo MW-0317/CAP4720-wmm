@@ -14,7 +14,7 @@ class Engine:
         pg.init()
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3)
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
-        pg.display.set_mode((width, height), pg.OPENGL, pg.DOUBLEBUF)
+        pg.display.set_mode((width, height), pg.OPENGL | pg.DOUBLEBUF)
 
         self.draw = True
         glClearColor(0.25, 0.25, 0.25, 1.0)
@@ -36,12 +36,12 @@ class Engine:
                 if event.type == pg.QUIT:
                     self.draw = False
 
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
             frame = Frame(deltatime)
             for scene in self.scenes:
-                scene.frame_update(frame)
+                frame = scene.frame_update(frame)
             
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-                
             pg.display.flip()
 
     def add_scene(self, scene: Scene):
