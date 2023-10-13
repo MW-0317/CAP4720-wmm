@@ -2,40 +2,51 @@ from OpenGL.GL import *
 import OpenGL.GL.shaders
 import numpy as np
 
-VERSION: bytes = b"#version 330\n"
+VERSION: bytes = "#version 330\n"
+SHADERS = [
+    (GL_VERTEX_SHADER, "VERTEX"),
+    (GL_FRAGMENT_SHADER, "FRAGMENT")
+]
 
 def load_shader(shader_file):
     shader_source = ""
     with open(shader_file) as f:
         shader_source = f.read()
     f.close()
-    return str.encode(shader_source)
+    return shader_source
 
-def compile_shader(vs, fs):
-    vert_shader = load_shader(vs)
-    frag_shader = load_shader(fs)
-
-    shader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(vert_shader, GL_VERTEX_SHADER),
-                                              OpenGL.GL.shaders.compileShader(frag_shader, GL_FRAGMENT_SHADER))
+def compile_shader(source, shader_type):
+    shader = glCreateShader(shader_type)
+    glShaderSource(shader, source)
+    glCompileShader(shader)
+    result = glGetShaderiv(shader, GL_COMPILE_STATUS)
+    if not result:
+        raise OpenGL.GL.shaders.ShaderCompilationError("\n\n" + glGetShaderInfoLog( shader ).decode())
     return shader
 
-def compile_shader(s):
-    vert_shader = load_shader(s)
-    frag_shader = load_shader(s)
+def compile_program(*s):
+    len_s = len(s)
+    compiled_shaders = []
 
-    shader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(VERSION + b"#define VERTEX_PROGRAM\n" 
-                                                                              + vert_shader, GL_VERTEX_SHADER),
-                                              OpenGL.GL.shaders.compileShader(VERSION + b"#define FRAGMENT_PROGRAM\n" 
-                                                                              + frag_shader, GL_FRAGMENT_SHADER))
-    return shader
+    if len_s == 1:
+        shader = load_shader(s[0])
+        for _shader in SHADERS:
+            c_shader = compile_shader(VERSION + "#define " + _shader[1] + "_PROGRAM\n" + shader, _shader[0])
+            compiled_shaders.append(c_shader)
+    elif len_s == 2:
+        vert_shader = load_shader(s[0])
+        frag_shader = load_shader(s[1])
+        compiled_shaders.append(compile_shader(vert_shader, GL_VERTEX_SHADER))
+        compiled_shaders.append(compile_shader(frag_shader, GL_FRAGMENT_SHADER))
+
+    
+    program = OpenGL.GL.shaders.compileProgram(*compiled_shaders)
+    return program
 
 
 class ShaderProgram:
-    def __init__(self, vs: str, fs: str):
-        self.id = compile_shader(vs, fs)
-    
-    def __init__(self, s: str):
-        self.id = compile_shader(s)
+    def __init__(self, *s: list[str]):
+        self.id = compile_program(*s)
 
     def __getitem__(self, key):
         return glGetUniformLocation(self.id, key)
