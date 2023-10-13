@@ -10,6 +10,10 @@ class Scene:
     def __init__(self):
         self.objects: list[Object.Object] = []
 
+    def delete(self):
+        for obj in self.objects:
+            obj.delete()
+
     def frame_update(self, frame: Interval.Frame) -> Interval.Frame:
         for obj in self.objects:
             if isinstance(obj, Camera.Camera):
@@ -20,8 +24,8 @@ class Scene:
                 obj.draw(frame)
         return frame
 
-    def tick_update(self, tick: Interval.Tick):
-        pass
+    def tick_update(self, tick: Interval.Tick) -> Interval.Tick:
+        return tick
 
     def add_object(self, object):
         self.objects.append(object)

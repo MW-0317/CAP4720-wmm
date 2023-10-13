@@ -80,9 +80,6 @@ class Object:
 
         self.position = [0, 0, 0]
 
-    def __del__(self):
-        self.delete()
-
     def getCenter(self):
         maxV = self.obj.v.max(axis=0)
         minV = self.obj.v.min(axis=0)
@@ -111,17 +108,15 @@ class Object:
 
     def draw(self, interval: Interval.Interval):
         self.enable()
-        model_loc       = glGetUniformLocation(self.shader.id, "model_matrix")
-        view_loc        = glGetUniformLocation(self.shader.id, "view_matrix")
-        projection_loc  = glGetUniformLocation(self.shader.id, "projection_matrix")
 
-        glUniformMatrix4fv(model_loc,       1, GL_FALSE, self.get_model_matrix())
-        glUniformMatrix4fv(view_loc,        1, GL_FALSE, interval.camera.get_view_matrix())
-        glUniformMatrix4fv(projection_loc,  1, GL_FALSE, interval.camera.get_projection_matrix())
+        self.shader["model_matrix"]         = self.get_model_matrix()
+        self.shader["view_matrix"]          = interval.camera.get_view_matrix()
+        self.shader["projection_matrix"]    = interval.camera.get_projection_matrix()
 
         glDrawArrays(GL_TRIANGLES, 0, self.n_vertices)
         self.disable()
 
     def delete(self):
-        glDeleteVertexArrays(1, [self.vao])
-        glDeleteBuffers(1, [self.vbo])
+        if (self.vao != None and self.vbo != None):
+            glDeleteVertexArrays(1, [self.vao])
+            glDeleteBuffers(1, [self.vbo])

@@ -1,7 +1,7 @@
 import pygame as pg, pyrr, math, numpy as np
 from datetime import datetime, timedelta
 from OpenGL.GL import *
-from core.guiV1 import *
+from core.gui import *
 from core.shaderLoader import *
 from core.Object import *
 from core.Scene import *
@@ -9,6 +9,9 @@ from core.Interval import *
 
 class Engine:
     def __init__(self, width: int, height: int):
+        self.TPS = 60
+        self.INV_TPS = timedelta(1 / self.TPS)
+
         self.scenes: list[Scene] = []
 
         pg.init()
@@ -20,17 +23,21 @@ class Engine:
         glClearColor(0.25, 0.25, 0.25, 1.0)
         glEnable(GL_DEPTH_TEST)
 
-    def __del__(self):
+    def delete(self):
+        for scene in self.scenes:
+            scene.delete()
         pg.quit()
         quit()
     
     def run(self):
-        deltatime = timedelta()
+        deltatime = timedelta() # Time since last frame
+        deltatick = timedelta() # Time since last tick
         last_time = datetime.now()
         while self.draw:
             now = datetime.now()
             deltatime = now - last_time
             last_time = now
+            deltatick += deltatime
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -41,8 +48,14 @@ class Engine:
             frame = Frame(deltatime)
             for scene in self.scenes:
                 frame = scene.frame_update(frame)
+
+            if deltatick > self.INV_TPS:
+                tick = Tick(deltatick)
+                for scence in self.scenes:
+                    tick = scene.tick_update(tick)
             
             pg.display.flip()
+        self.delete()
 
     def add_scene(self, scene: Scene):
         self.scenes.append(scene)
