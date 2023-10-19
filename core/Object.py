@@ -1,4 +1,4 @@
-from core.objLoaderV4 import ObjLoader
+from core.objLoader import ObjLoader
 import core.Interval as Interval
 from OpenGL.GL import *
 import numpy as np
@@ -78,7 +78,9 @@ class Object:
 
         self.disable()
 
-        self.position = [0, 0, 0]
+        self.rotation   = [0, 0, 0]
+        self.position   = [0, 0, 0]
+        self.scale      = [1, 1, 1]
 
     def getCenter(self):
         maxV = self.obj.v.max(axis=0)
@@ -95,8 +97,19 @@ class Object:
     def set_position(self, position: list[float, float, float]):
         self.position = position
 
+    def set_scale(self, scale: list[float, float, float]):
+        self.scale = scale
+
+    def set_rotation(self, rotation: list[float, float, float]):
+        self.rotation = rotation
+
     def get_model_matrix(self) -> pyrr.Matrix44:
-        return pyrr.matrix44.create_from_translation(pyrr.Vector3(self.position) - pyrr.Vector3(self.center))
+        model = pyrr.matrix44.create_from_translation(pyrr.Vector3(self.position) - pyrr.Vector3(self.center))
+        model = pyrr.matrix44.multiply(model, pyrr.matrix44.create_from_x_rotation(self.rotation[0]))
+        model = pyrr.matrix44.multiply(model, pyrr.matrix44.create_from_y_rotation(self.rotation[1]))
+        model = pyrr.matrix44.multiply(model, pyrr.matrix44.create_from_z_rotation(self.rotation[2]))
+        model = pyrr.matrix44.multiply(model, pyrr.matrix44.create_from_scale(self.scale))
+        return model
     
     def enable(self):
         glUseProgram(self.shader.id)
@@ -105,6 +118,10 @@ class Object:
     def disable(self):
         glUseProgram(0)
         glBindVertexArray(0)
+
+    def frame_update(self, frame: Interval.Frame) -> Interval.Frame:
+        self.draw(frame)
+        return frame
 
     def draw(self, interval: Interval.Interval):
         self.enable()
