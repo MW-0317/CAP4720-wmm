@@ -13,6 +13,9 @@ class Engine:
         self.TPS = 60
         self.INV_TPS = timedelta(seconds=1 / self.TPS)
 
+        self.width = width
+        self.height = height
+
         self.scenes: list[Scene] = []
         
         pg.init()
@@ -52,6 +55,7 @@ class Engine:
                 self.guiManager.run_event(event)
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            self.gui_surface.fill(pg.Color(0.0, 0.0, 0.0, 0.0))
 
             frame = Frame()
             frame.time = pg.time.get_ticks()
@@ -62,10 +66,10 @@ class Engine:
 
             self.gpuBlit(self.gui_surface, frame)
 
-            if deltatick > self.INV_TPS:
+            while deltatick > self.INV_TPS:
                 tick = Tick()
                 tick.time = pg.time.get_ticks()
-                tick.deltatick = deltatime.seconds
+                tick.deltatick = self.INV_TPS.seconds
                 for scene in self.scenes:
                     tick = scene.tick_update(tick)
                 deltatick = timedelta(seconds=0)
