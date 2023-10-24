@@ -10,11 +10,19 @@ from core.Interval import *
 
 class Engine:
     def __init__(self, width: int, height: int):
-        self.TPS = 60
-        self.INV_TPS = timedelta(seconds=1 / self.TPS)
+        self.TPS        = 60
+        self.INV_TPS    = timedelta(seconds=1 / self.TPS)
 
-        self.width = width
-        self.height = height
+        self.width                  = width
+        self.height                 = height
+
+        self.width_fraction : float = 1/4
+        self.height_fraction: float = 1/5
+        self.main_width : int       = int(width * 3 * self.width_fraction)
+        self.main_height : int      = int(height)
+
+        self.ui_width : int         = int(width * self.width_fraction)
+        self.ui_height : int        = int(height)
 
         self.scenes: list[Scene] = []
         
@@ -30,6 +38,7 @@ class Engine:
         glClearColor(0.25, 0.25, 0.25, 1.0)
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
+        glEnable(GL_SCISSOR_TEST)
         glDepthFunc(GL_LEQUAL)
 
     def delete(self):
@@ -43,10 +52,21 @@ class Engine:
         deltatick = timedelta(0) # Time since last tick
         last_time = datetime.now()
         while self.draw:
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            self.gui_surface.fill(pg.Color(0.0, 0.0, 0.0, 0.0))
+
+            glViewport(0, 0, self.main_width, self.main_height)
+            glScissor(0, 0, self.main_width, self.main_height)
+
             now = datetime.now()
             deltatime = now - last_time
             last_time = now
             deltatick += deltatime
+            
+            frame = Frame()
+            frame.time = pg.time.get_ticks()
+            frame.deltatime = deltatime.seconds
+            self.frame_update(frame)
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -54,34 +74,35 @@ class Engine:
                 
                 self.guiManager.run_event(event)
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            self.gui_surface.fill(pg.Color(0.0, 0.0, 0.0, 0.0))
-
-            frame = Frame()
-            frame.time = pg.time.get_ticks()
-            frame.deltatime = deltatime.seconds
-            for scene in self.scenes:
-                frame = scene.frame_update(frame)
-            self.guiManager.frame_update(frame)
-
-            self.gpuBlit(self.gui_surface, frame)
-
             while deltatick > self.INV_TPS:
                 tick = Tick()
                 tick.time = pg.time.get_ticks()
                 tick.deltatick = self.INV_TPS.seconds
-                for scene in self.scenes:
-                    tick = scene.tick_update(tick)
+                self.tick_update(tick)
                 deltatick = timedelta(seconds=0)
-            
+
             pg.display.flip()
         self.delete()
+
+    def frame_update(self, frame: Frame):
+        for scene in self.scenes:
+            frame = scene.frame_update(frame)
+        self.guiManager.frame_update(frame)
+        self.gpuBlit(self.gui_surface, frame)
+        
+    def tick_update(self, tick: Tick):
+        for scene in self.scenes:
+            tick = scene.tick_update(tick)
 
     def add_scene(self, scene: Scene):
         self.scenes.append(scene)
 
     def gpuBlit(self, surface: pg.Surface, frame: Frame):
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glViewport(0, 0, self.width, self.height)
+        glScissor(0, 0, self.width, self.height)
+
+        #glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
         width = surface.get_width()
         height = surface.get_height()
         buffer = surface.get_view("1")
@@ -111,4 +132,3 @@ class Engine:
         square.draw(frame)
 
         glDeleteTextures(1, [id])
-        glBlendFunc(GL_ONE, GL_ZERO)

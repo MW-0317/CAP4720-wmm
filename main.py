@@ -4,12 +4,12 @@ from core.Object import Object
 from core.Camera import Camera
 from core.shaderLoader import ShaderProgram
 
-from game.guiSetup import guiSetup
+from game.Game import Game
 
 width = 800
 height = 600
-e = Engine(width, height)
-guiSetup(e)
+g = Game(width, height)
+g.guiSetup()
 s = Scene()
 c = Camera([0, 1, 2], 45, width / height)
 c.forward = -c.position
@@ -18,5 +18,5 @@ o = Object("resources/objects/board.obj", shader)
 o.set_scale([0.75, 0.75, 0.75])
 s.add_object(o)
 s.add_object(c)
-e.add_scene(s)
-e.run()
+g.add_scene(s)
+g.run()
