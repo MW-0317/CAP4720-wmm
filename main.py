@@ -9,7 +9,6 @@ from game.Game import Game
 width = 800
 height = 600
 g = Game(width, height)
-g.guiSetup()
 s = Scene()
 c = Camera([0, 1, 2], 45, width / height)
 c.forward = -c.position

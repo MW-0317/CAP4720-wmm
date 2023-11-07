@@ -32,6 +32,20 @@
         "font":
          {
              "size": "12"
+         },
+         "misc":
+         {
+            "text_horiz_alignment": "center",
+            "border_width": "0"
          }
+    },
+    "window":
+    {
+        "misc":
+        {
+            "border_width": "1",
+            "enable_close_button": "0",
+            "enable_title_bar": "0"
+        }
     }
 }
