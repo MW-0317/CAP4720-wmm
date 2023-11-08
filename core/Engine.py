@@ -101,7 +101,7 @@ class Engine:
     def gpuBlit(self, surface: pg.Surface, frame: Frame):
         glViewport(self.width - self.ui_width, 0, self.width, self.height)
         glScissor(self.width - self.ui_width, 0, self.width, self.height)
-        glClearColor(0.0, 0.0, 0.0, 1.0)
+        glClearColor(0.1, 0.1, 0.1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glViewport(0, 0, self.width, self.height)
         glScissor(0, 0, self.width, self.height)

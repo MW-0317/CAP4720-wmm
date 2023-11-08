@@ -1,3 +1,5 @@
+import re
+
 class Gamestate:
 
     def __init__(self):
@@ -15,6 +17,20 @@ class Gamestate:
         self.DownTownStudioApt = [0, 0, 0]
         self.SkyRiseFlat = [0, 0, 0]
         self.SuburbanTownHouse = [0, 0, 0]
+
+    def location_spaced_string(location: str):
+        """
+        Helper function to get the spaced version of the property string
+        """
+        return re.sub(r"(\w)([A-Z])", r"\1 \2", location)
+    
+    def current_player_list(self, current_player: int) -> list:
+        """
+        Helper function to get the list of the current player
+        """
+        if current_player > 2: 
+            return []
+        return self.player1 if current_player == 1 else self.player2
 
     #this method finds where the piece should move based on the dice value rolled and then call the current game state method to preform the action
     #it then returns a string for game actions

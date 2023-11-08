@@ -19,7 +19,7 @@ class Game(Engine):
     def __init__(self, width: int, height: int):
         # To be replaced with self.game_state, 
         # where player turn can be accessed from.
-        self.player_turn : PlayerTurn = PlayerTurn()
+        self.player_turn : PlayerTurn = PlayerTurn(self)
         self.gamestate : Gamestate = Gamestate()
 
         self.test_gui = SimpleGUI("Debug & Testing")
@@ -31,7 +31,7 @@ class Game(Engine):
 
     def frame_update(self, frame: Frame):
         self.gamestate.player1[0] = self.money_slider.get_value()
-        #self.money_label.set_text("Money: " + str(self.gamestate.player1[0]))
+        self.money_label.set_text("Money: " + str(self.gamestate.player1[0]))
         super().frame_update(frame)
 
     def run(self):
@@ -48,7 +48,6 @@ class Game(Engine):
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)
-        self.guiManager.create_button(relative_rect=rules_rect, text="Rules", callback=help.toggle_visibility)
-        #self.guiManager.create_window(self.width / 2 - 100, self.height / 2 - 100, 200, 200)
-        self.guiManager.query_confirmation("t", 300, 300, lambda: print("Here"))
+        self.guiManager.create_button(relative_rect=rules_rect, text="Rules", callback=lambda ui: help.toggle_visibility())
+    
     

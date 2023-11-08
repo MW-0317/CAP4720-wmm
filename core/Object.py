@@ -6,6 +6,15 @@ import math
 import sys
 import pyrr
 
+"""
+Object class wrapper for given objLoader.py with Texture class wrapper with help
+from pygame image loader.
+"""
+
+class Texture:
+    # TODO: Mark
+    ...
+
 class Object:
     def __init__(self, file, shader):
         self.obj = ObjLoader(file)
