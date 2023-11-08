@@ -40,15 +40,15 @@ class Game(Engine):
     def guiSetup(self):
         help_rect = pg.Rect(0, 0, self.ui_width, self.ui_height * self.height_fraction * 2)
         help = self.guiManager.create_text(self.HELP_MESSAGE, relative_rect=help_rect)
-        #help.hide()
+        help.hide()
 
         money_height = self.ui_height * self.height_fraction * 1 / 2
         money_rect = pg.Rect(self.width - self.ui_width, 0, self.ui_width, money_height)
-        #self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.gamestate.player1[0]))
+        self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.gamestate.player1[0]))
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)
-        #self.guiManager.create_button(relative_rect=rules_rect, text="Rules", callback=help.show)
+        self.guiManager.create_button(relative_rect=rules_rect, text="Rules", callback=help.toggle_visibility)
         #self.guiManager.create_window(self.width / 2 - 100, self.height / 2 - 100, 200, 200)
-        #self.guiManager.query_confirmation("t", 300, 300, lambda: print("Here"))
+        self.guiManager.query_confirmation("t", 300, 300, lambda: print("Here"))
     

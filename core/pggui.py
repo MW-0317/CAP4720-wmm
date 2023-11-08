@@ -12,7 +12,8 @@ Author: Mark Williams
 This will need to be rewritten soon, there's too much rewritting of previously written code.
 """
 
-class UIElement ():
+class UIElement (pggui.core.UIElement):
+    shown = False
     def __init__(self, manager):
         # List of events of event type and callback function for event
         self.events: list[list[int, Callable]] = []
@@ -23,8 +24,12 @@ class UIElement ():
 
     def run_event(self, current_event):
         for event in self.events:
-            if current_event.type == event[0] and current_event.ui_element == self.id:
+            if current_event.type == event[0] and current_event.ui_element == self:
                 event[1]()
+
+    def toggle_visibility(self):
+        self.shown = not self.shown
+        self.show() if self.shown else self.hide()
 
 class Window (UIElement, pggui.elements.UIWindow):
     def __init__(self, manager, *args, **kwargs):
@@ -67,14 +72,35 @@ class Text (UIElement, pggui.elements.UITextBox):
         UIElement.__init__(self, manager)
         pggui.elements.UITextBox.__init__(self, *args, **kwargs)
 
-class guiManager(pggui.UIManager, Window):
+class guiManager(pggui.UIManager):
     def __init__(self, width, height, surface):
+        self.manager = self
         self.width                          = width
         self.height                         = height
         self.ui_elements: list[UIElement]   = []
         self.surface                        = surface
         pggui.UIManager.__init__(self, (width, height), theme_path="./resources/gui/theme.json")
-        Window.__init__(self, self, rect=pg.Rect(0, 0, width, height))
+
+    def create_element(self, *args, anchor="", classType: type[UIElement] = UIElement, **kwargs):
+        anchors = {anchor: anchor}
+        element = classType(self.manager, *args, anchors=anchors, **kwargs)
+        self.manager.ui_elements.append(element)
+        return element
+
+    def create_button(self, *args, callback: Callable = None, **kwargs):
+        button = self.create_element(*args, classType=Button, **kwargs)
+        button.add_event(pggui.UI_BUTTON_PRESSED, callback)
+        return button
+    
+    def create_label(self, *args, **kwargs):
+        return self.create_element(*args, **kwargs, classType=Label)
+
+    def create_text(self, *args, **kwargs):
+        return self.create_element(*args, **kwargs, classType=Text)
+    
+    def create_window(self, *args, **kwargs):
+        window = Window(self.manager, *args, **kwargs)
+        return window
     
     # game.guiManager.queryConfirmation(f"Would you like to buy ${gamestate.properties[property_index][...]}", confirm_callback)
     def query_confirmation(self, text, width, height, callback: Callable = None):
