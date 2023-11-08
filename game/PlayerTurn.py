@@ -23,12 +23,16 @@ class PlayerTurn:
 
         player_list = gamestate.current_player_list(player_index)
 
-        def wantsToBuy(confirmed: bool):
-            if confirmed and player_list[0] > gamestate.get_property_price(prop):
-                gamestate.buy_property(player_index, prop)
-
+        prop_price = gamestate.get_property_price(prop)
         location_string_fixed = Gamestate.Gamestate.location_spaced_string(prop)
-        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed}?", 
+        if player_list[0] < prop_price:
+            self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
+            return
+
+        def wantsToBuy(confirmed: bool):
+            if confirmed: gamestate.buy_property(player_index, prop)
+
+        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
                                                         300, 300, callback=wantsToBuy)
 
     def roll_dice(self, gamestate: Gamestate) -> int:

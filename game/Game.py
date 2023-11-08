@@ -23,7 +23,8 @@ class Game(Engine):
         self.gamestate : Gamestate = Gamestate()
 
         self.test_gui = SimpleGUI("Debug & Testing")
-        self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 0, 10)
+        self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 100, 10)
+        self.gamestate.player1[0] = self.money_slider.get_value()
 
         super().__init__(width, height)
 
