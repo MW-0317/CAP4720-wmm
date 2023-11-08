@@ -14,7 +14,7 @@ def main():
     c = Camera([0, 1, 2], 45, width / height)
     c.forward = -c.position
     shader = ShaderProgram("resources/shaders/object.glsl")
-    textures = [Texture("./resources/images/Gameboard.png", "mat.texture")]
+    textures = [Texture("./resources/images/Gameboard.png", "materialTexture")]
     o = Object("resources/objects/board.obj", shader, textures)
     o.set_scale([0.75, 0.75, 0.75])
     s.add_object(o)

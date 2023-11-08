@@ -34,8 +34,8 @@ struct material
     float       shininess;
     int         textureType;
     float       mixAmount;
-    sampler2D   texture;
 };
+layout (binding = 0) uniform sampler2D materialTexture;
 
 struct light
 {
@@ -47,8 +47,8 @@ struct environment
 {
     vec3        color;
     vec3        eye;
-    samplerCube texture;
 };
+layout (binding = 1) uniform samplerCube environmentTexture;
 
 in vec3 fNormal;
 in vec3 fPosition;
@@ -68,9 +68,9 @@ void main()
     vec3 viewVector = normalize(env.eye - fPosition);
 
     // Texture
-    vec3 mainColor      = texture(mat.texture, fTexCoord).xyz;
+    vec3 mainColor      = texture(materialTexture, fTexCoord).xyz;
     vec3 reflectVector  = reflect(-viewVector, normal);
-    vec3 envColor       = texture(env.texture, -reflectVector).xyz;
+    vec3 envColor       = texture(environmentTexture, -reflectVector).xyz;
 
     vec3 textureColor = mix(mainColor, envColor, mat.mixAmount);
     currentColor = textureColor;

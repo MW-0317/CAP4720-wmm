@@ -24,7 +24,6 @@ class Texture:
         self.name = name
 
         w, h, image = Texture.load_image(filename)
-        print(w, h)
 
         self.id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.id)
