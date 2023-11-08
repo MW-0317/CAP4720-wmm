@@ -1,7 +1,16 @@
 import re
 
 class Gamestate:
-
+    """
+    Tracks the current state of the game.
+    """
+    # Helper dictionary for getting property costs.
+    property_prices = {
+            "AirZandZRental":       300,
+            "SuburbanTownHouse":    450,
+            "DownTownStudioApt":    600,
+            "SkyRiseFlat":          800
+        }
     def __init__(self):
         self.gamestate = True
 
@@ -20,9 +29,10 @@ class Gamestate:
 
     def location_spaced_string(location: str):
         """
-        Helper function to get the spaced version of the property string
+        Helper function to get the spaced version of the property string,
+        with some regex and string magic.
         """
-        return re.sub(r"(\w)([A-Z])", r"\1 \2", location)
+        return re.sub(r"(([A-Z](?!(and))[a-z]*)|[A-Z]|and)", r"\1 ", location)[:-1]
     
     def current_player_list(self, current_player: int) -> list:
         """
@@ -191,6 +201,16 @@ class Gamestate:
             return self.SkyRiseFlatRent(currentplayer)
         elif (properity == 'SuburbanTownHouse'):
             return self.SuburbanTownHouseRent(currentplayer)
+        
+    def buy_property(self, currentplayer: int, prop: str):
+        """
+        Buy's a property by calling a given Buy...() function.
+        """
+        func = getattr(self, "Buy" + prop)
+        func(currentplayer)
+
+    def get_property_price(self, prop: str):
+        return self.property_prices[prop]
 
     def BuyAirZandZRental(self, currentplayer: int):
         if (currentplayer == 1):

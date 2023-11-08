@@ -94,14 +94,12 @@ class guiManager(pggui.UIManager, ElementHolder):
         window = Window(self.manager, *args, **kwargs)
         return window
     
-    # game.guiManager.queryConfirmation(f"Would you like to buy ${gamestate.properties[property_index][...]}", confirm_callback)
-    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = None):
+    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = lambda ui: None):
         window_rect = pg.Rect(self.width // 2 - width // 2, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
-        #window.create_text(10, 10, width - 10, height - 10, text="TEST", anchor="center")
+
         width = width - 30
         height = height - 30
-        #window.create_button(40, 40, width - 80, height - 80, text="", anchor="center", callback=callback)
 
         text_size = (width - width // 15, height - height // 3)
         text_rect = pg.Rect(width // 2 - text_size[0] // 2, height // 15, text_size[0], text_size[1])
@@ -121,6 +119,10 @@ class guiManager(pggui.UIManager, ElementHolder):
         decline_rect = pg.Rect(width // 15, height - confirm_size[1] - height // 15, confirm_size[0], confirm_size[1])
         window.create_button(decline_rect, text=decline_text, anchor="left", callback=lambda ui_element: close_window_and_callback(ui_element, False), object_id=decline_id)
     
+    def query_error(self, text, width, height, ok_text="Oops"):
+        # TODO
+        ...
+
     def run_event(self, current_event):
         # Elements are yet to be removed when killed TODO
         elements_size = len(self.ui_elements)

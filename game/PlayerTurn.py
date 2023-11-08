@@ -13,28 +13,22 @@ class PlayerTurn:
     def __init__(self, engine: Engine):
         self.engine: Engine = engine
 
-    def rent(self, gamestate: Gamestate, player_index):
+    def rent(self, gamestate: Gamestate.Gamestate, player_index: int):
         if gamestate.players[player_index][0] < 0:
             self.bankrupt(gamestate, player_index)
 
-    def buy(self, gamestate: Gamestate, player_index, property_index):
-        if gamestate.players[player_index][0] < 0:
-            self.bankrupt(gamestate, player_index)
-
-        wantsToBuy = True
-        if wantsToBuy and gamestate.players[player_index][0] > gamestate.properties[property_index][0]:
-            ...
+    def buy(self, gamestate: Gamestate.Gamestate, player_index: int, prop: str):
+        if not prop.startswith("OfferToBuy"): return
+        prop = prop.replace("OfferToBuy", "")
 
         player_list = gamestate.current_player_list(player_index)
 
         def wantsToBuy(confirmed: bool):
-            # TODO
-            ...
+            if confirmed and player_list[0] > gamestate.get_property_price(prop):
+                gamestate.buy_property(player_index, prop)
 
-        location = player_list[1]
-        location_string = gamestate.gamelocation(location, 1)
-        location_string_fixed = Gamestate.location_spaced_string(location_string)
-        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed}", 
+        location_string_fixed = Gamestate.Gamestate.location_spaced_string(prop)
+        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed}?", 
                                                         300, 300, callback=wantsToBuy)
 
     def roll_dice(self, gamestate: Gamestate) -> int:
