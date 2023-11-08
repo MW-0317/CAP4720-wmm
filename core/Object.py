@@ -5,18 +5,58 @@ import numpy as np
 import math
 import sys
 import pyrr
+import pygame as pg
 
 """
 Object class wrapper for given objLoader.py with Texture class wrapper with help
 from pygame image loader.
+Author: Mark Williams
 """
 
 class Texture:
-    # TODO: Mark
-    ...
+    def load_image(filename, format="RGBA", flip=True):
+        surface = pg.image.load(filename)
+        image   = pg.image.tobytes(surface, format, flip)
+
+        return surface.get_width(), surface.get_height(), image
+
+    def __init__(self, filename, name):
+        self.name = name
+
+        w, h, image = Texture.load_image(filename)
+        print(w, h)
+
+        self.id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.id)
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     GL_RGBA,
+                     w,
+                     h,
+                     0,
+                     GL_RGBA,
+                     GL_UNSIGNED_BYTE,
+                     image)
+        glGenerateMipmap(GL_TEXTURE_2D)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        
+        del image
+
+    def enable(self, index: int):
+        glActiveTexture(GL_TEXTURE0 + index)
+        glBindTexture(GL_TEXTURE_2D, self.id)
+
+    def disable(self):
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
 class Object:
-    def __init__(self, file, shader):
+    def __init__(self, file, shader, textures: list = []):
+        self.textures = textures
         self.obj = ObjLoader(file)
         if self.obj.v.size == 0:
             return
@@ -123,10 +163,18 @@ class Object:
     def enable(self):
         glUseProgram(self.shader.id)
         glBindVertexArray(self.vao)
+        self.shader["env.color"] = [1.0, 1.0, 1.0]
+        i = 0
+        for texture in self.textures:
+            texture.enable(i)
+            self.shader[texture.name] = i
+            i += 1
 
     def disable(self):
         glUseProgram(0)
         glBindVertexArray(0)
+        for texture in self.textures:
+            texture.disable()
 
     def frame_update(self, frame: Interval.Frame) -> Interval.Frame:
         self.draw(frame)
