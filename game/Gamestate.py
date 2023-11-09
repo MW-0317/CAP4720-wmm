@@ -4,6 +4,7 @@ class Gamestate:
     """
     Tracks the current state of the game.
     """
+
     # Helper dictionary for getting property costs.
     property_prices = {
             "AirZandZRental":       300,
@@ -11,6 +12,7 @@ class Gamestate:
             "DownTownStudioApt":    600,
             "SkyRiseFlat":          800
         }
+    
     def __init__(self):
         self.gamestate = True
 
@@ -20,6 +22,7 @@ class Gamestate:
         #money, player position, stock value
         self.player1 = [1500, 0, 200]
         self.player2 = [1500, 0, 200]
+        self.current_player = 1
 
         #owner, number of houses, mortgaged 0 for false
         self.AirZandZRental = [0, 0, 0]
@@ -33,6 +36,9 @@ class Gamestate:
         with some regex and string magic.
         """
         return re.sub(r"(([A-Z](?!(and))[a-z]*)|[A-Z]|and)", r"\1 ", location)[:-1]
+    
+    def swap_current_player(self):
+        self.current_player = self.current_player % 2 + 1
     
     def current_player_list(self, current_player: int) -> list:
         """

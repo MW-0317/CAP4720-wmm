@@ -24,15 +24,37 @@ class Game(Engine):
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 100, 10)
+        self.position_slider = self.test_gui.add_slider("Position", 0, 7, 0, 1)
         self.gamestate.player1[0] = self.money_slider.get_value()
+        self.gamestate.player1[1] = self.position_slider.get_value()
 
         super().__init__(width, height)
 
         self.guiSetup()
 
     def frame_update(self, frame: Frame):
-        self.gamestate.player1[0] = self.money_slider.get_value()
-        self.money_label.set_text("Money: " + str(self.gamestate.player1[0]))
+        # TODO: Temporarily show current player positions using a beam or cylinder
+        
+        current_player_list = self.gamestate.current_player_list(self.gamestate.current_player)
+        current_player_list[0] = self.money_slider.get_value()
+        current_player_list[1] = self.position_slider.get_value()
+        
+        # TODO: Set camera to side of board given position,
+        # need to now get this into a function like getCurrentCameraPosition.
+        # Would love to introduce camera animations if given time to provide
+        # smooth transitions.
+        if self.scenes[0].current_camera != None:
+            camera = self.scenes[0].current_camera
+            camera_pos = [0, 2]
+            def rotate(pos):
+                return (-pos[1], pos[0])
+            n = current_player_list[1] // 2
+            for i in range(0, n):
+                camera_pos = rotate(camera_pos)
+            camera.set_position((camera_pos[0], 1, camera_pos[1]))
+            camera.pan = 90 * n
+            
+        self.money_label.set_text("Money: " + str(current_player_list[0]))
         super().frame_update(frame)
 
     def run(self):
