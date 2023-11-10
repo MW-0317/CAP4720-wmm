@@ -16,7 +16,7 @@ def main():
     shader = ShaderProgram("resources/shaders/object.glsl")
     textures = [Texture("./resources/images/Gameboard.png", "materialTexture")]
     o = Object("resources/objects/board.obj", shader, textures)
-    o.set_scale([0.75, 0.75, 0.75])
+    o.set_scale([2/(o.diameter)] * 3)
     s.add_object(o)
     s.add_object(c)
     g.add_scene(s)

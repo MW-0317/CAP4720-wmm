@@ -124,7 +124,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         decline_rect = pg.Rect(width // 15, height - confirm_size[1] - height // 15, confirm_size[0], confirm_size[1])
         window.create_button(decline_rect, text=decline_text, anchor="left", callback=lambda ui_element: close_window_and_callback(ui_element, False), object_id=decline_id)
     
-    def query_message(self, text, width, height, okay_text="Okay"):
+    def query_message(self, text, width, height, okay_text="Okay", callback: Callable = lambda ui: None):
         window, width, height = self.query_window(text, width, height)
 
         def close_window(ui_element):
