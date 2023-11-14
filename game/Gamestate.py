@@ -1,7 +1,7 @@
 class Gamestate:
 
     def __init__(self):
-        self.gamestate = True
+        self.gamestatecon = True
 
         #which event we are on, may add randomizing start later
         self.event = 0
@@ -16,18 +16,14 @@ class Gamestate:
         self.SkyRiseFlat = [0, 0, 0]
         self.SuburbanTownHouse = [0, 0, 0]
 
+    def getgamestatecon(self):
+        return self.gamestatecon
+
     #this method finds where the piece should move based on the dice value rolled and then call the current game state method to preform the action
     #it then returns a string for game actions
     def gamelocation(self, dicevalue: int, currentplayer: int):
 
-        #updates player location
-        if(currentplayer == 1):
-            self.player1[1] = self.player1[1] + dicevalue
-            playermove = self.player1[1]
-        elif(currentplayer == 2):
-            self.player2[1] = self.player2[1] + dicevalue
-            playermove = self.player2[1]
-
+        #check jail before updating
         if (currentplayer == 1):
             if(self.player1[3] > 0):
                 self.player1[3] = self.player1[3]-1
@@ -42,6 +38,15 @@ class Gamestate:
                     self.player2[0] = self.player2[0] - 50
                 else:
                     return "OfferToPayToLeaveJail"
+
+        #updates player location
+        if(currentplayer == 1):
+            self.player1[1] = self.player1[1] + dicevalue
+            playermove = self.player1[1]
+        elif(currentplayer == 2):
+            self.player2[1] = self.player2[1] + dicevalue
+            playermove = self.player2[1]
+
 
         if((playermove-dicevalue)%8+dicevalue > 8):
             #if player passes GO give them money
@@ -124,7 +129,7 @@ class Gamestate:
             elif (currentplayer == 2):
                 self.player1[0] = self.player1[0] + rentvalue
                 self.player2[0] = self.player2[0] - rentvalue
-            return "SkyRiseFlat"
+            return "MoveToSkyRiseFlat"
 
     #this method add money to the player that passed or landed on go based on their go value
     def passgo(self, currentplayer: int):
@@ -134,7 +139,7 @@ class Gamestate:
             elif (currentplayer == 2):
                 self.player2[0] = self.player1[0] + self.player2[2]
 
-    #call this when I play chooses to leave jail by paying 50
+    #call this when a player chooses to leave jail by paying 50
     def leavejail(self, currentplayer: int):
 
         if (currentplayer == 1):
@@ -179,16 +184,16 @@ class Gamestate:
         return self.checkgamestate()
 
     def forfit(self):
-        self.gamestate = False
+        self.gamestatecon = False
 
     def checkgamestate(self):
 
         if(self.player1[0] < 0):
-            self.gamestate = False
+            self.gamestatecon = False
             return "Player 2 Won"
 
         if(self.player2[0] < 0):
-            self.gamestate = False
+            self.gamestatecon = False
             return "Player 1 Won"
 
         return "Next Players Turn"
