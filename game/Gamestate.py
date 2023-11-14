@@ -6,9 +6,9 @@ class Gamestate:
         #which event we are on, may add randomizing start later
         self.event = 0
 
-        #money, player position, stock value
-        self.player1 = [1500, 0, 200]
-        self.player2 = [1500, 0, 200]
+        #money, player position, stock value, jail turns remaining
+        self.player1 = [1500, 0, 200, 0]
+        self.player2 = [1500, 0, 200, 0]
 
         #owner, number of houses, mortgaged 0 for false
         self.AirZandZRental = [0, 0, 0]
@@ -27,6 +27,21 @@ class Gamestate:
         elif(currentplayer == 2):
             self.player2[1] = self.player2[1] + dicevalue
             playermove = self.player2[1]
+
+        if (currentplayer == 1):
+            if(self.player1[3] > 0):
+                self.player1[3] = self.player1[3]-1
+                if(self.player1[3] == 0):
+                    self.player1[0] = self.player1[0] - 50
+                else:
+                    return "OfferToPayToLeaveJail"
+        elif (currentplayer == 2):
+            if (self.player2[3] > 0):
+                self.player2[3] = self.player2[3] - 1
+                if (self.player2[3] == 0):
+                    self.player2[0] = self.player2[0] - 50
+                else:
+                    return "OfferToPayToLeaveJail"
 
         if((playermove-dicevalue)%8+dicevalue > 8):
             #if player passes GO give them money
@@ -91,8 +106,10 @@ class Gamestate:
             # do CourtBattle
             if(currentplayer == 1):
                 self.player1[1] = playermove - 4
+                self.player1[3] = 3
             elif(currentplayer == 2):
                 self.player2[1] = playermove - 4
+                self.player2[3] = 3
             return "MoveToCourtBattleThenJail"
 
         if (playermove % 8 == 7):
@@ -116,6 +133,18 @@ class Gamestate:
                 self.player1[0] = self.player1[0] + self.player1[2]
             elif (currentplayer == 2):
                 self.player2[0] = self.player1[0] + self.player2[2]
+
+    #call this when I play chooses to leave jail by paying 50
+    def leavejail(self, currentplayer: int):
+
+        if (currentplayer == 1):
+            self.player1[3] = 0
+            if(self.player1[3] == 0):
+                self.player1[0] = self.player1[0] - 50
+        elif (currentplayer == 2):
+            self.player2[3] = 0
+            if (self.player2[3] == 0):
+                self.player2[0] = self.player2[0] - 50
 
 
     #this method returns the name of the event and proccess the event
