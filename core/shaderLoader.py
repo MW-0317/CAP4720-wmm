@@ -2,7 +2,7 @@ from OpenGL.GL import *
 import OpenGL.GL.shaders
 import numpy as np
 
-VERSION: bytes = "#version 330\n"
+VERSION: bytes = "#version 420\n"
 SHADERS = [
     (GL_VERTEX_SHADER, "VERTEX"),
     (GL_FRAGMENT_SHADER, "FRAGMENT")

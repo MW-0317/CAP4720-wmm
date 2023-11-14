@@ -47,7 +47,7 @@ class ElementHolder:
         self.manager.ui_elements.append(element)
         return element
     
-    def create_button(self, *args, callback: Callable = None, **kwargs):
+    def create_button(self, *args, callback: Callable = lambda ui: None, **kwargs):
         button = self.create_element(*args, classType=Button, **kwargs)
         button.add_event(pggui.UI_BUTTON_PRESSED, callback)
         return button
@@ -94,18 +94,21 @@ class guiManager(pggui.UIManager, ElementHolder):
         window = Window(self.manager, *args, **kwargs)
         return window
     
-    # game.guiManager.queryConfirmation(f"Would you like to buy ${gamestate.properties[property_index][...]}", confirm_callback)
-    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = None):
+    def query_window(self, text, width, height):
         window_rect = pg.Rect(self.width // 2 - width // 2, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
-        #window.create_text(10, 10, width - 10, height - 10, text="TEST", anchor="center")
+
         width = width - 30
         height = height - 30
-        #window.create_button(40, 40, width - 80, height - 80, text="", anchor="center", callback=callback)
 
         text_size = (width - width // 15, height - height // 3)
         text_rect = pg.Rect(width // 2 - text_size[0] // 2, height // 15, text_size[0], text_size[1])
         window.create_text(relative_rect=text_rect, html_text=text)
+
+        return window, width, height
+    
+    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = lambda ui: None):
+        window, width, height = self.query_window(text, width, height)
 
         def close_window_and_callback(ui_element, confimed: bool):
             window.kill()
@@ -121,6 +124,17 @@ class guiManager(pggui.UIManager, ElementHolder):
         decline_rect = pg.Rect(width // 15, height - confirm_size[1] - height // 15, confirm_size[0], confirm_size[1])
         window.create_button(decline_rect, text=decline_text, anchor="left", callback=lambda ui_element: close_window_and_callback(ui_element, False), object_id=decline_id)
     
+    def query_message(self, text, width, height, okay_text="Okay", callback: Callable = lambda ui: None):
+        window, width, height = self.query_window(text, width, height)
+
+        def close_window(ui_element):
+            window.kill()
+
+        okay_id = pggui.core.ObjectID("@query_button", "")
+        okay_size = (width // 2.7, height // 8)
+        okay_rect = pg.Rect((width // 2 - okay_size[0] // 2, height - okay_size[1] - height // 15), okay_size)
+        window.create_button(okay_rect, text=okay_text, callback=close_window)
+
     def run_event(self, current_event):
         # Elements are yet to be removed when killed TODO
         elements_size = len(self.ui_elements)

@@ -9,6 +9,7 @@ import core.Camera as Camera
 class Scene:
     def __init__(self):
         self.objects: list[Object.Object] = []
+        self.current_camera: Camera.Camera = None
 
     def delete(self):
         for obj in self.objects:
@@ -17,7 +18,9 @@ class Scene:
     def frame_update(self, frame: Interval.Frame) -> Interval.Frame:
         for obj in self.objects:
             if isinstance(obj, Camera.Camera):
-                frame = obj.frame_update(frame)
+                self.current_camera = obj
+
+        frame = self.current_camera.frame_update(frame)
         
         for obj in self.objects:
             if not isinstance(obj, Camera.Camera):

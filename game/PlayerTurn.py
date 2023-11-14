@@ -7,42 +7,46 @@ if TYPE_CHECKING:
 
 import random
 
-import game.Gamestate as Gamestate
+import game.Gamestate as gs
+Gamestate = gs.Gamestate
 
 class PlayerTurn:
     def __init__(self, engine: Engine):
         self.engine: Engine = engine
 
-    def rent(self, gamestate: Gamestate, player_index):
+    def rent(self, gamestate: Gamestate, player_index: int):
         if gamestate.players[player_index][0] < 0:
             self.bankrupt(gamestate, player_index)
 
-    def buy(self, gamestate: Gamestate, player_index, property_index):
-        if gamestate.players[player_index][0] < 0:
-            self.bankrupt(gamestate, player_index)
-
-        wantsToBuy = True
-        if wantsToBuy and gamestate.players[player_index][0] > gamestate.properties[property_index][0]:
-            ...
+    def buy(self, gamestate: Gamestate, player_index: int, prop: str):
+        if not prop.startswith("OfferToBuy"): return
+        prop = prop.replace("OfferToBuy", "")
 
         player_list = gamestate.current_player_list(player_index)
 
-        def wantsToBuy(confirmed: bool):
-            # TODO
-            ...
+        prop_price = gamestate.get_property_price(prop)
+        location_string_fixed = Gamestate.location_spaced_string(prop)
+        if player_list[0] < prop_price:
+            self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
+            return
 
-        location = player_list[1]
-        location_string = gamestate.gamelocation(location, 1)
-        location_string_fixed = Gamestate.location_spaced_string(location_string)
-        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed}", 
+        def wantsToBuy(confirmed: bool):
+            if confirmed: gamestate.buy_property(player_index, prop)
+
+        self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
                                                         300, 300, callback=wantsToBuy)
 
-    def roll_dice(self, gamestate: Gamestate) -> int:
-        """Provides GUI given a Game class and returns
-        the rolled dice value.
+    def roll_dice(self, gamestate: Gamestate, player_index: int):
         """
-        # TODO: Animation / Simulation
-        return random.randint(1,6)
+        Provides GUI given a Game class.
+        """
+        def simulation():
+            # TODO: Some simulation
+            dice_val = random.randint(1, 6)
+            prop = gamestate.gamelocation(dice_val, player_index)
+            self.buy(gamestate, player_index, prop)
+
+        self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)
     
     def start_turn(self, gamestate: Gamestate):
         # TODO: Prompt button to roll dice

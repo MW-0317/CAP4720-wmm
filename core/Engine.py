@@ -136,4 +136,8 @@ class Engine:
 
         square.draw(frame)
 
+        glDeleteProgram(shader.id)
+        square.delete()
+        del raw_buffer
+        del buffer
         glDeleteTextures(1, [id])
