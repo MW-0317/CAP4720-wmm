@@ -6,6 +6,12 @@ from core.shaderLoader import ShaderProgram
 
 from game.Game import Game
 
+# Texture loading
+def load_object_with_texture(object_file, texture_file) -> Object:
+    shader = ShaderProgram("resources/shaders/object.glsl")
+    textures = [Texture(texture_file, "mat.texture")]
+    return Object(object_file, shader, textures)
+
 def main():
     width = 800
     height = 600
@@ -13,9 +19,7 @@ def main():
     s = Scene()
     c = Camera([0, 1, 2], 45, width / height)
     c.forward = -c.position
-    shader = ShaderProgram("resources/shaders/object.glsl")
-    textures = [Texture("./resources/images/Gameboard.png", "mat.texture")]
-    o = Object("resources/objects/board.obj", shader, textures)
+    o = load_object_with_texture("resources/objects/board.obj", "./resources/images/Gameboard.png")
     o.set_scale([0.75, 0.75, 0.75])
     s.add_object(o)
     s.add_object(c)
