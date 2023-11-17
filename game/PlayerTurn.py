@@ -42,7 +42,7 @@ class PlayerTurn:
         """
         def simulation():
             # TODO: Some simulation
-            dice_val = random.randint(1, 6)
+            dice_val = random.randint(1, 6) + random.randint(1, 6)
             prop = gamestate.gamelocation(dice_val, player_index)
             self.buy(gamestate, player_index, prop)
 
