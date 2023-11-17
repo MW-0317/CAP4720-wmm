@@ -14,15 +14,14 @@ class Gamestate:
         }
     
     def __init__(self):
-        self.gamestate = True
+        self.gamestatecon = True
 
         #which event we are on, may add randomizing start later
         self.event = 0
 
-        #money, player position, stock value
-        self.player1 = [1500, 0, 200]
-        self.player2 = [1500, 0, 200]
-        self.current_player = 1
+        #money, player position, stock value, jail turns remaining
+        self.player1 = [1500, 0, 200, 0]
+        self.player2 = [1500, 0, 200, 0]
 
         #owner, number of houses, mortgaged 0 for false
         self.AirZandZRental = [0, 0, 0]
@@ -48,9 +47,28 @@ class Gamestate:
             return []
         return self.player1 if current_player == 1 else self.player2
 
+    def getgamestatecon(self):
+        return self.gamestatecon
+
     #this method finds where the piece should move based on the dice value rolled and then call the current game state method to preform the action
     #it then returns a string for game actions
     def gamelocation(self, dicevalue: int, currentplayer: int):
+
+        #check jail before updating
+        if (currentplayer == 1):
+            if(self.player1[3] > 0):
+                self.player1[3] = self.player1[3]-1
+                if(self.player1[3] == 0):
+                    self.player1[0] = self.player1[0] - 50
+                else:
+                    return "OfferToPayToLeaveJail"
+        elif (currentplayer == 2):
+            if (self.player2[3] > 0):
+                self.player2[3] = self.player2[3] - 1
+                if (self.player2[3] == 0):
+                    self.player2[0] = self.player2[0] - 50
+                else:
+                    return "OfferToPayToLeaveJail"
 
         #updates player location
         if(currentplayer == 1):
@@ -59,6 +77,7 @@ class Gamestate:
         elif(currentplayer == 2):
             self.player2[1] = self.player2[1] + dicevalue
             playermove = self.player2[1]
+
 
         if((playermove-dicevalue)%8+dicevalue > 8):
             #if player passes GO give them money
@@ -123,8 +142,10 @@ class Gamestate:
             # do CourtBattle
             if(currentplayer == 1):
                 self.player1[1] = playermove - 4
+                self.player1[3] = 3
             elif(currentplayer == 2):
                 self.player2[1] = playermove - 4
+                self.player2[3] = 3
             return "MoveToCourtBattleThenJail"
 
         if (playermove % 8 == 7):
@@ -139,7 +160,7 @@ class Gamestate:
             elif (currentplayer == 2):
                 self.player1[0] = self.player1[0] + rentvalue
                 self.player2[0] = self.player2[0] - rentvalue
-            return "SkyRiseFlat"
+            return "MoveToSkyRiseFlat"
 
     #this method add money to the player that passed or landed on go based on their go value
     def passgo(self, currentplayer: int):
@@ -148,6 +169,18 @@ class Gamestate:
                 self.player1[0] = self.player1[0] + self.player1[2]
             elif (currentplayer == 2):
                 self.player2[0] = self.player1[0] + self.player2[2]
+
+    #call this when a player chooses to leave jail by paying 50
+    def leavejail(self, currentplayer: int):
+
+        if (currentplayer == 1):
+            self.player1[3] = 0
+            if(self.player1[3] == 0):
+                self.player1[0] = self.player1[0] - 50
+        elif (currentplayer == 2):
+            self.player2[3] = 0
+            if (self.player2[3] == 0):
+                self.player2[0] = self.player2[0] - 50
 
 
     #this method returns the name of the event and proccess the event
@@ -182,16 +215,16 @@ class Gamestate:
         return self.checkgamestate()
 
     def forfit(self):
-        self.gamestate = False
+        self.gamestatecon = False
 
     def checkgamestate(self):
 
         if(self.player1[0] < 0):
-            self.gamestate = False
+            self.gamestatecon = False
             return "Player 2 Won"
 
         if(self.player2[0] < 0):
-            self.gamestate = False
+            self.gamestatecon = False
             return "Player 1 Won"
 
         return "Next Players Turn"
