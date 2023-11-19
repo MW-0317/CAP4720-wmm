@@ -25,7 +25,7 @@ class Scene:
         for obj in self.objects:
             if not isinstance(obj, Camera.Camera):
                 obj.frame_update(frame)
-                
+        
         return frame
 
     def tick_update(self, tick: Interval.Tick) -> Interval.Tick:
