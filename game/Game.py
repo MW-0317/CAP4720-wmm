@@ -23,14 +23,14 @@ class Game(Engine):
         self.current_player = 1
         self.diceroled = False
         self.endturn = False
-        self.g = Gamestate.Gamestate()
+        self.g = Gamestate()
         self.p = PlayerTurn(self)
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
         self.position_slider = self.test_gui.add_slider("Position", 0, 7, 0, 1)
-        self.gamestate.player1[0] = self.money_slider.get_value()
-        self.gamestate.player1[1] = self.position_slider.get_value()
+        self.g.player1[0] = self.money_slider.get_value()
+        self.g.player1[1] = self.position_slider.get_value()
 
         super().__init__(width, height)
 
@@ -39,7 +39,7 @@ class Game(Engine):
     def frame_update(self, frame: Frame):
         # TODO: Temporarily show current player positions using a beam or cylinder
         
-        current_player_list = self.gamestate.current_player_list(self.gamestate.current_player)
+        current_player_list = self.g.current_player_list(self.g.current_player)
         #current_player_list[0] = self.money_slider.get_value()
         current_player_list[1] = self.position_slider.get_value()
         
@@ -72,7 +72,7 @@ class Game(Engine):
 
         money_height = self.ui_height * self.height_fraction * 1 / 2
         money_rect = pg.Rect(self.width - self.ui_width, 0, self.ui_width, money_height)
-        self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.gamestate.player1[0]))
+        self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.g.player1[0]))
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)

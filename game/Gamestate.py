@@ -22,6 +22,7 @@ class Gamestate:
         #money, player position, stock value, jail turns remaining
         self.player1 = [1500, 0, 200, 0]
         self.player2 = [1500, 0, 200, 0]
+        self.current_player = 1
 
         #owner, number of houses, mortgaged 0 for false
         self.AirZandZRental = [0, 0, 0]

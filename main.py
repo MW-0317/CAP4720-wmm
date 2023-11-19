@@ -19,18 +19,25 @@ def main():
     height = 600
     g = Game(width, height)
     s = Scene()
-    c = Camera([0, 1, 2], 45, width / height)
-    c.forward = -c.position
+
+    # Board
     o = load_object_with_texture("resources/objects/board.obj", "./resources/images/Gameboard.png")
+    o.set_scale([2 / o.diameter] * 3)
+    s.add_object(o)
+
+    # Cat
     shader = ShaderProgram("resources/shaders/object.glsl")
     o2 = Object("resources/objects/cat.obj", shader)
-    o.set_scale([2 / o.diameter] * 3)
-    o2.set_scale([(2 / o2.diameter)] * 3)
-    o2.set_position([0, 0, 0])
+    o2.set_scale([(1 / o2.diameter)] * 3)
+    o2.set_position([5, 0, 0])
     o2.set_rotation([0, 0, 0])
-    #s.add_object(o)
-    s.add_object(o2)
+    # s.add_object(o2)
+
+    # Camera
+    c = Camera([0, 1, 2], 45, width / height)
+    c.forward = -c.position
     s.add_object(c)
+
     g.add_scene(s)
     g.run()
 
