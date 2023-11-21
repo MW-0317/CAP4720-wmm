@@ -86,6 +86,11 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.ui_elements: list[UIElement]   = []
         self.surface                        = surface
         pggui.UIManager.__init__(self, (width, height), theme_path="./resources/gui/theme.json")
+        self._load_fonts()
+
+    def _load_fonts(self):
+        fonts = [{'name': 'fira_code', 'point_size': 18, 'style': 'regular'}]
+        self.preload_fonts(fonts)
 
     def get_container(self):
         return None
@@ -106,6 +111,9 @@ class guiManager(pggui.UIManager, ElementHolder):
         window.create_text(relative_rect=text_rect, html_text=text)
 
         return window, width, height
+    
+    def query_option(self, text, width, height, first_option="One", second_option="Two", callback: Callable = lambda ui: None):
+        ...
     
     def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = lambda ui: None):
         window, width, height = self.query_window(text, width, height)

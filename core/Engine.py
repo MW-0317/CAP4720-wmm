@@ -33,6 +33,8 @@ class Engine:
         self.gui_surface        = pg.Surface((width, height))
 
         self.guiManager = guiManager(width, height, self.gui_surface)
+        self.shader_gui = ShaderProgram("resources/shaders/gui/gui.glsl")
+        self.square_gui = Object("resources/objects/square.obj", self.shader_gui)
 
         self.draw = True
         glClearColor(0.25, 0.25, 0.25, 1.0)
@@ -131,13 +133,9 @@ class Engine:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
 
-        shader = ShaderProgram("resources/shaders/gui/gui.glsl")
-        square = Object("resources/objects/square.obj", shader)
-
-        square.draw(frame)
-
-        glDeleteProgram(shader.id)
-        square.delete()
+        gui_tex = Texture.textureFromId(id, "GUITexture")
+        self.square_gui.set_textures([gui_tex])
+        self.square_gui.draw(frame)
         del raw_buffer
         del buffer
         glDeleteTextures(1, [id])

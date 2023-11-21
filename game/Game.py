@@ -80,10 +80,11 @@ class Game(Engine):
 
         #self.player_turn.buy(self.gamestate, 1, "OfferToBuyAirZandZRental")
         #self.player_turn.roll_dice(self.gamestate, 1)
+        self.g.player1[3] = 3
+        self.p.prompt_jail(self.g, 1)
 
     def tick_update(self, tick: Tick):
-
-
+        self.logicRun()
         super().tick_update(tick)
 
     def run(self):
@@ -99,20 +100,16 @@ class Game(Engine):
     #Logical Processing of actions returned from gamestate and calls to animations. Needs GUI calls to be completed
     def logicRun(self):
 
-        #placeholder replace 0 with dice value
+        # I will need to introduce many of these checkpoints
+        # that come from PlayerTurn / self.p
+        if self.p.dice_roll == -1: return
 
-
-        if(self.diceroled == True):
-            dicevalue = 0 #add gui dice rolled method here
-
-        self.diceroled == False
-
-        action = self.g.gamelocation(dicevalue, self.current_player)
+        action = self.g.gamelocation(self.p.dice_roll, self.current_player)
 
         if(action == "OfferToPayToLeaveJail"):
             if(self.GUIpayjail() == True):
                 self.g.leavejail(self.current_player)
-                action = self.g.gamelocation(dicevalue, self.current_player)
+                action = self.g.gamelocation(self.p.dice_roll, self.current_player)
 
         if(action == "MoveToGo"):
             self.PlacePlayer("GO")
