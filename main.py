@@ -11,8 +11,8 @@ import math
 # Texture loading
 def load_object_with_texture(object_file, texture_file) -> Object:
     shader = ShaderProgram("resources/shaders/object.glsl")
-    textures = [Texture(texture_file, "mat.texture")]
-    return Object(object_file, shader, textures)
+    textures = [Texture.textureFromFile(texture_file, "mat.albedoTexture")]
+    return Object(object_file, shader, textures=textures)
 
 def main():
     width = 800
@@ -26,12 +26,11 @@ def main():
     s.add_object(o)
 
     # Cat
-    shader = ShaderProgram("resources/shaders/object.glsl")
-    o2 = Object("resources/objects/cat.obj", shader)
-    o2.set_scale([(1 / o2.diameter)] * 3)
-    o2.set_position([5, 0, 0])
-    o2.set_rotation([0, 0, 0])
-    # s.add_object(o2)
+    o2 = Object.create_silver_object("resources/objects/cat.obj")
+    o2.set_scale([(2 / o2.diameter) / 5] * 3)
+    o2.set_position([0, 0, 0])
+    o2.set_rotation([math.pi / 2, 0, 0])
+    s.add_object(o2)
 
     # Camera
     c = Camera([0, 1, 2], 45, width / height)

@@ -86,6 +86,11 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.ui_elements: list[UIElement]   = []
         self.surface                        = surface
         pggui.UIManager.__init__(self, (width, height), theme_path="./resources/gui/theme.json")
+        self._load_fonts()
+
+    def _load_fonts(self):
+        fonts = [{'name': 'fira_code', 'point_size': 18, 'style': 'regular'}]
+        self.preload_fonts(fonts)
 
     def get_container(self):
         return None
