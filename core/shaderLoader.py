@@ -2,7 +2,7 @@ from OpenGL.GL import *
 import OpenGL.GL.shaders
 import numpy as np
 
-VERSION: bytes = "#version 420\n"
+VERSION: bytes = "#version 330\n"
 SHADERS = [
     (GL_VERTEX_SHADER, "VERTEX"),
     (GL_FRAGMENT_SHADER, "FRAGMENT")
@@ -39,14 +39,46 @@ def compile_program(*s):
         compiled_shaders.append(compile_shader(vert_shader, GL_VERTEX_SHADER))
         compiled_shaders.append(compile_shader(frag_shader, GL_FRAGMENT_SHADER))
 
-    
-    program = OpenGL.GL.shaders.compileProgram(*compiled_shaders)
-    return program
+    program = glCreateProgram()
+    for shader in compiled_shaders:
+        glAttachShader(program, shader)
+    program = OpenGL.GL.shaders.ShaderProgram( program )
+    glLinkProgram(program)
 
+    count = glGetProgramiv(program, GL_ACTIVE_UNIFORMS)
+    print("Uniform count:", count)
+
+    glUseProgram(program)
+
+    # Ensures that textures are bound separately and
+    # do not cause issues in shader code.
+    tex_count: int = 0
+    for i in range(count):
+        name, size, t = glGetActiveUniform(program, i)
+        if t == GL_SAMPLER_2D: 
+            loc = glGetUniformLocation(program, name)
+            glUniform1i(loc, tex_count)
+            tex_count += 1
+        elif t == GL_SAMPLER_CUBE:
+            loc = glGetUniformLocation(program, name)
+            glUniform1i(loc, tex_count)
+            tex_count += 1
+    glUseProgram(0)
+
+    program.check_validate()
+    program.check_linked()
+
+    for shader in compiled_shaders:
+        glDeleteShader(shader)
+    return program
 
 class ShaderProgram:
     def __init__(self, *s: list[str]):
         self.id = compile_program(*s)
+
+    def from_json(self, json: dict):
+        for key, value in json.items():
+            self[key] = value
 
     def __getitem__(self, key):
         return glGetUniformLocation(self.id, key)
