@@ -9,14 +9,14 @@ uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
 out vec3 fNormal;
-out vec3 fPos;
+out vec3 fPosition;
 out vec2 fTexCoord;
 
 void main()
 {
     vec4 tPos = model_matrix * vec4(aPosition, 1.0);
     vec4 pos = projection_matrix * view_matrix * tPos;
-    fPos = tPos.xyz;
+    fPosition = tPos.xyz;
     gl_Position = pos;
 
     mat4 normal_matrix = transpose(inverse(model_matrix));
