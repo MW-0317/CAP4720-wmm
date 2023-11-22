@@ -25,12 +25,26 @@ def main():
     o.set_scale([2 / o.diameter] * 3)
     s.add_object(o)
 
-    # Cat
+    # Cat (player 1)
     o2 = Object.create_silver_object("resources/objects/cat.obj")
     o2.set_scale([(2 / o2.diameter) / 5] * 3)
     o2.set_position([0, 0, 0])
     o2.set_rotation([math.pi / 2, 0, 0])
     s.add_object(o2)
+
+    # Wolf (player 2)
+    o3 = Object.create_silver_object("resources/objects/wolf.obj")
+    o3.set_scale([(2 / o3.diameter) / 5] * 3)
+    o3.set_position([0, 0.13, 0])
+    o3.set_rotation([0, 0, 0])
+    s.add_object(o3)
+
+    #Starts Objects in correct location
+    o2.set_position([0.5, 0.13, 0.5])
+    o2.set_rotation([math.pi / 2, math.pi/2, 0])
+
+    o3.set_position([0.50, 0.13, 0.50])
+    o3.set_rotation([0, math.pi / 2, 0])
 
     # Camera
     c = Camera([0, 1, 2], 45, width / height)

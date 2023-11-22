@@ -7,6 +7,7 @@ from core.pggui import Frame
 from core.shaderLoader import ShaderProgram
 from game.PlayerTurn import PlayerTurn
 from game.Gamestate import Gamestate
+import math
 
 import pygame as pg
 
@@ -188,20 +189,136 @@ class Game(Engine):
     def PlacePlayer(self, Location: str):
 
         if(Location == "GO"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(0, oldlocation)
+
         if (Location == "AirZandZRental"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(1, oldlocation)
+
         if (Location == "Jail"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(2, oldlocation)
+
         if (Location == "JustVisiting"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(2, oldlocation)
+
         if (Location == "SuburbanTownHouse"):
-            x = 1
-        if (Location == "DownTownStudioApt"):
-            x = 1
-        if (Location == "CourtBattle"):
-            x = 1
-        if (Location == "SkyRiseFlat"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(3, oldlocation)
+
         if (Location == "FreeParking"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(4, oldlocation)
+
+        if (Location == "DownTownStudioApt"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(5, oldlocation)
+
+        if (Location == "CourtBattle"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(6, oldlocation)
+
+        if (Location == "SkyRiseFlat"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(7, oldlocation)
+
+
+    def animationSeqeunce(self, end: int, begin: int):
+
+        if(begin > end):
+            moves = begin + self.p.dice_roll
+            self.animationTree(begin, moves)
+        elif(begin < end):
+            moves = begin + self.p.dice_roll
+            self.animationTree(begin, moves)
+        elif(end == begin):
+            moves = 8
+            self.animationTree(begin, moves)
+
+    #animationTree covers the logic of calling animations X number of moves
+    def animationTree(self, begin: int, moves: int):
+
+        i = 0
+        while (i < moves):
+
+            if (begin == 0 and i == 0) or (i > 0 and i < moves):
+                # GO to AirZandZRental
+                i = i + 1
+                if(self.current_player == 1):
+                    o2.set_position([0.0, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+                elif(self.current_player == 2):
+                    o3.set_position([0.0, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi / 2, 0])
+
+            if (begin == 1 and i == 0) or (i > 0 and i < moves):
+                # AirZandZRental to Jail or JustVisiting
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([-0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([-0.5, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi, 0])
+
+            if (begin == 2 and i == 0) or (i > 0 and i < moves):
+                # Jail or JustVisiting to SuburbanTownHouse
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([-0.5, 0.13, 0.0])
+                    o2.set_rotation([math.pi / 2, math.pi, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([-0.5, 0.13, 0.0])
+                    o3.set_rotation([0, math.pi, 0])
+
+            if (begin == 3 and i == 0) or (i > 0 and i < moves):
+                # SuburbanTownHouse to FreeParking
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([-0.5, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([-0.5, 0.13, -0.5])
+                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+
+            if (begin == 4 and i == 0) or (i > 0 and i < moves):
+                # FreeParking to DownTownStudioApt
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([0.0, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([0.0, 0.13, 0.5])
+                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+
+            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+                # DownTownStudioApt to CourtBattle
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, 0, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([0.5, 0.13, 0.5])
+                    o3.set_rotation([0, 0, 0])
+
+            if (begin == 6 and i == 0) or (i > 0 and i < moves):
+                # CourtBattle to SkyRiseFlat
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([0.5, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, 0, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([0.5, 0.13, -0.5])
+                    o3.set_rotation([0, 0, 0])
+
+            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+                # SkyRiseFlat to Go
+                i = i + 1
+                if (self.current_player == 1):
+                    o2.set_position([0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+                elif (self.current_player == 2):
+                    o3.set_position([0.5, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi / 2, 0])
