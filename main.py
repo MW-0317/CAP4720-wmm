@@ -14,6 +14,7 @@ def load_object_with_texture(object_file, texture_file) -> Object:
     textures = [Texture.textureFromFile(texture_file, "mat.albedoTexture")]
     return Object(object_file, shader, textures=textures)
 
+
 def main():
     width = 800
     height = 600
