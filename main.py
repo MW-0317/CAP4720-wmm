@@ -24,14 +24,19 @@ def main():
     # Board
     o = load_object_with_texture("resources/objects/board.obj", "./resources/images/Gameboard.png")
     o.set_scale([2 / o.diameter] * 3)
-    s.add_object(o)
+    #s.add_object(o)
 
     # Cat
     o2 = Object.create_silver_object("resources/objects/cat.obj")
     o2.set_scale([(2 / o2.diameter) / 5] * 3)
     o2.set_position([0, 0, 0])
     o2.set_rotation([math.pi / 2, 0, 0])
-    s.add_object(o2)
+    #s.add_object(o2)
+
+    # Ray Tracing
+    s3 = ShaderProgram("resources/shaders/raytrace.glsl")
+    o3 = Object("resources/objects/square.obj", s3)
+    s.add_object(o3)
 
     # Camera
     c = Camera([0, 1, 2], 45, width / height)
