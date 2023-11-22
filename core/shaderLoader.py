@@ -46,7 +46,6 @@ def compile_program(*s):
     glLinkProgram(program)
 
     count = glGetProgramiv(program, GL_ACTIVE_UNIFORMS)
-    print("Uniform count:", count)
 
     glUseProgram(program)
 

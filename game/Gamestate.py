@@ -19,6 +19,10 @@ class Gamestate:
         #which event we are on, may add randomizing start later
         self.event = 0
 
+        # Stating which turn the game is in
+        # Where the round is self.turn // 2 (integer divide)
+        self.turn = 0
+
         #money, player position, stock value, jail turns remaining
         self.player1 = [1500, 0, 200, 0]
         self.player2 = [1500, 0, 200, 0]

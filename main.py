@@ -26,7 +26,9 @@ def main():
     s.add_object(o)
 
     # Cat
-    o2 = Object.create_silver_object("resources/objects/cat.obj")
+    o2 = Object.create_silver_object("resources/objects/cat.obj", 
+                                     [Texture.create_empty(), 
+                                      Texture.cubemapFromFile("resources/textures/skybox", "bmp", "env.texture")])
     o2.set_scale([(2 / o2.diameter) / 5] * 3)
     o2.set_position([0, 0, 0])
     o2.set_rotation([math.pi / 2, 0, 0])

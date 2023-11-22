@@ -103,6 +103,7 @@ class Game(Engine):
         # I will need to introduce many of these checkpoints
         # that come from PlayerTurn / self.p
         if self.p.dice_roll == -1: return
+        self.p.prompt_jail(self.g, self.current_player)
 
         action = self.g.gamelocation(self.p.dice_roll, self.current_player)
 

@@ -54,7 +54,7 @@ class Material:
         i = 0
         for texture in self.textures:
             texture.enable(i)
-            shader[texture.name] = i
+            if texture.name != "": shader[texture.name] = i
             i += 1
 
         shader_dict = {
@@ -76,6 +76,7 @@ class Material:
             texture.disable()
 
 class Texture:
+    GL_TEXTURE_TYPE = GL_TEXTURE_2D
     @staticmethod
     def load_image(filename, format="RGBA", flip=True):
         surface = pg.image.load(filename)
@@ -89,8 +90,8 @@ class Texture:
         return t
     
     @staticmethod
-    def textureFromId(id, name) -> Texture:
-        t = Texture(id, name)
+    def textureFromId(id, name, texture_type=GL_TEXTURE_2D) -> Texture:
+        t = Texture(id, name, texture_type)
         return t
     
     @staticmethod
@@ -116,18 +117,56 @@ class Texture:
         
         del image
         return Texture.textureFromId(id, name)
+    
+    @staticmethod
+    def cubemapFromFile(folder, image_type, name) -> Texture:
+        images = []
+        for file in ["px", "nx", "py", "ny", "pz", "nz"]:
+            w, h, image = Texture.load_image(folder + "/" + file + "." + image_type,
+                                             flip=False)
+            images.append([w, h, image])
 
-    def __init__(self, id, name):
+        id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, id)
+        i = 0
+        for image in images:
+            glTexImage2D(
+                # px, nx, py, ny, pz, nz
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                0,
+                GL_RGB,
+                image[0],
+                image[1],
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                image[2]
+            )
+            i+=1
+            del image[2]
+        
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0)
+
+        return Texture.textureFromId(id, name, GL_TEXTURE_CUBE_MAP)
+
+    def __init__(self, id, name, texture_type=GL_TEXTURE_2D):
         self.id = id
         self.name = name
+        self.GL_TEXTURE_TYPE = texture_type
 
     def enable(self, index: int):
         glActiveTexture(GL_TEXTURE0 + index)
-        glBindTexture(GL_TEXTURE_2D, self.id)
+        glBindTexture(self.GL_TEXTURE_TYPE, self.id)
 
     def disable(self):
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, 0)
+        glBindTexture(self.GL_TEXTURE_TYPE, 0)
 
 class Object:
     @staticmethod

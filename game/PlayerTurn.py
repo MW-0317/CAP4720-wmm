@@ -47,6 +47,7 @@ class PlayerTurn:
         def wantsToRoll(roll: True):
             if roll:
                 self.roll_dice(gamestate, player_index)
+                player_list[3] -= 1
 
         self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", 300, 300, 
                                                   "Roll!", "Pay $50", callback=wantsToRoll)
