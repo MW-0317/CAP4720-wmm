@@ -31,6 +31,7 @@ def main():
     o2.set_position([0, 0, 0])
     o2.set_rotation([math.pi / 2, 0, 0])
     s.add_object(o2)
+    g.player_objects.append(o2)
 
     # Wolf (player 2)
     o3 = Object.create_silver_object("resources/objects/wolf.obj")
@@ -38,6 +39,7 @@ def main():
     o3.set_position([0, 0.13, 0])
     o3.set_rotation([0, 0, 0])
     s.add_object(o3)
+    g.player_objects.append(o3)
 
     #Starts Objects in correct location
     o2.set_position([0.5, 0.13, 0.5])
