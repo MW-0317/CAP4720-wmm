@@ -389,6 +389,7 @@ class Game(Engine):
 
         action = self.g.buyHouse(properity, self.current_player)
         if((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            # add some error message to end user?
             return
 
         HouseNumber = action[-1:-1]
@@ -396,14 +397,19 @@ class Game(Engine):
 
         if (actionLoc == "BuildHouseOnAirZandZRental"):
             house = self.LightBlueHouse_objects[HouseNumber]
-            #house.set_position.y(0.06)
+            house.set_position.y(0.06)
 
         if (actionLoc == "BuildHouseOnSuburbanTownHouse"):
-            ...
+            house = self.OrangeHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
         if (actionLoc == "BuildHouseOnDownTownStudioApt"):
-            ...
+            house = self.YellowHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
         if (actionLoc == "BuildHouseOnSkyRiseFlat"):
-            ...
+            house = self.DarkBlueHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
 
 
     # GUI Call for house animation Processing for selling a house, just moves the house bellow the board
@@ -411,6 +417,7 @@ class Game(Engine):
 
         action = self.g.sellHouse(properity, self.current_player)
         if ((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            #add some error message to end user?
             return
 
         HouseNumber = action[-1:-1]
@@ -418,10 +425,13 @@ class Game(Engine):
 
         if (actionLoc == "RemoveHouseOnAirZandZRental"):
             house = self.LightBlueHouse_objects[HouseNumber]
-            # house.set_position.y(-0.1)
+            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnSuburbanTownHouse"):
-            ...
+            house = self.OrangeHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnDownTownStudioApt"):
-            ...
+            house = self.YellowHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnSkyRiseFlat"):
-            ...
+            house = self.DarkBlueHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
