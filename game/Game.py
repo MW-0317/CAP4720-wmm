@@ -26,6 +26,7 @@ class Game(Engine):
         self.endturn = False
         self.g = Gamestate()
         self.p = PlayerTurn(self)
+        self.player_objects = []
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
@@ -239,6 +240,8 @@ class Game(Engine):
 
     #animationTree covers the logic of calling animations X number of moves
     def animationTree(self, begin: int, moves: int):
+        o2 = self.player_objects[0]
+        o3 = self.player_objects[1]
 
         i = 0
         while (i < moves):
