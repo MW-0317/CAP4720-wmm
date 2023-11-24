@@ -405,24 +405,24 @@ class Gamestate:
 
 
         if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] < 5)):
-            self.buildhouse(properity)
+            houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -50)
-            return "BuildHouseOnAirZandZRental"
+            return "BuildHouseOnAirZandZRental"+str(houseNumber)
 
         elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] < 5)):
-            self.buildhouse(properity)
+            houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -100)
-            return "BuildHouseOnSuburbanTownHouse"
+            return "BuildHouseOnSuburbanTownHouse"+str(houseNumber)
 
         elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] < 5)):
-            self.buildhouse(properity)
+            houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -150)
-            return "BuildHouseOnDownTownStudioApt"
+            return "BuildHouseOnDownTownStudioApt"+str(houseNumber)
 
         elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] < 5)):
-            self.buildhouse(properity)
+            houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -200)
-            return "BuildHouseOnSkyRiseFlat"
+            return "BuildHouseOnSkyRiseFlat"+str(houseNumber)
 
         else:
             return "Max number of houses have been built already"
@@ -432,24 +432,24 @@ class Gamestate:
     def sellHouse(self, properity: str, currentplayer: int):
 
         if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] > 0)):
-            self.removehouse(properity)
+            houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 25)
-            return "RemoveHouseOnAirZandZRental"
+            return "RemoveHouseOnAirZandZRental"+str(houseNumber)
 
         elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] > 0)):
-            self.removehouse(properity)
+            houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 50)
-            return "RemoveHouseOnSuburbanTownHouse"
+            return "RemoveHouseOnSuburbanTownHouse"+str(houseNumber)
 
         elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] > 0)):
-            self.removehouse(properity)
+            houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 75)
-            return "RemoveHouseOnDownTownStudioApt"
+            return "RemoveHouseOnDownTownStudioApt"+str(houseNumber)
 
         elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] > 0)):
-            self.removehouse(properity)
+            houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 100)
-            return "RemoveHouseOnSkyRiseFlat"
+            return "RemoveHouseOnSkyRiseFlat"+str(houseNumber)
 
         else:
             return "Not Enough Houses to Sell"

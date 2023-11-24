@@ -27,6 +27,10 @@ class Game(Engine):
         self.g = Gamestate()
         self.p = PlayerTurn(self)
         self.player_objects = []
+        self.LightBlueHouse_objects = []
+        self.OrangeHouse_objects = []
+        self.YellowHouse_objects = []
+        self.DarkBlueHouse_objects = []
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
@@ -379,3 +383,45 @@ class Game(Engine):
                 o3.set_position(partialPos)
 
             time = time + 1
+
+    # GUI Call for house animation Processing for building a house, just moves the house above the board
+    def ProcessBuildHouse(self, properity: str):
+
+        action = self.g.buyHouse(properity, self.current_player)
+        if((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            return
+
+        HouseNumber = action[-1:-1]
+        actionLoc = action[:-1]
+
+        if (actionLoc == "BuildHouseOnAirZandZRental"):
+            house = self.LightBlueHouse_objects[HouseNumber]
+            #house.set_position.y(0.06)
+
+        if (actionLoc == "BuildHouseOnSuburbanTownHouse"):
+            ...
+        if (actionLoc == "BuildHouseOnDownTownStudioApt"):
+            ...
+        if (actionLoc == "BuildHouseOnSkyRiseFlat"):
+            ...
+
+
+    # GUI Call for house animation Processing for selling a house, just moves the house bellow the board
+    def ProcessSellHouse(self, properity: str):
+
+        action = self.g.sellHouse(properity, self.current_player)
+        if ((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            return
+
+        HouseNumber = action[-1:-1]
+        actionLoc = action[:-1]
+
+        if (actionLoc == "RemoveHouseOnAirZandZRental"):
+            house = self.LightBlueHouse_objects[HouseNumber]
+            # house.set_position.y(-0.1)
+        if (actionLoc == "RemoveHouseOnSuburbanTownHouse"):
+            ...
+        if (actionLoc == "RemoveHouseOnDownTownStudioApt"):
+            ...
+        if (actionLoc == "RemoveHouseOnSkyRiseFlat"):
+            ...
