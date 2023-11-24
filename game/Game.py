@@ -250,9 +250,13 @@ class Game(Engine):
                 # GO to AirZandZRental
                 i = i + 1
                 if(self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
                     o2.set_position([0.0, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, math.pi / 2, 0])
                 elif(self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
                     o3.set_position([0.0, 0.13, 0.5])
                     o3.set_rotation([0, math.pi / 2, 0])
 
@@ -260,9 +264,13 @@ class Game(Engine):
                 # AirZandZRental to Jail or JustVisiting
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
                     o2.set_position([-0.5, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, math.pi, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
                     o3.set_position([-0.5, 0.13, 0.5])
                     o3.set_rotation([0, math.pi, 0])
 
@@ -270,9 +278,13 @@ class Game(Engine):
                 # Jail or JustVisiting to SuburbanTownHouse
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
                     o2.set_position([-0.5, 0.13, 0.0])
                     o2.set_rotation([math.pi / 2, math.pi, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
                     o3.set_position([-0.5, 0.13, 0.0])
                     o3.set_rotation([0, math.pi, 0])
 
@@ -280,9 +292,13 @@ class Game(Engine):
                 # SuburbanTownHouse to FreeParking
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
                     o2.set_position([-0.5, 0.13, -0.5])
                     o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
                     o3.set_position([-0.5, 0.13, -0.5])
                     o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
@@ -290,9 +306,13 @@ class Game(Engine):
                 # FreeParking to DownTownStudioApt
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
                     o2.set_position([0.0, 0.13, -0.5])
                     o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
                     o3.set_position([0.0, 0.13, 0.5])
                     o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
@@ -300,9 +320,13 @@ class Game(Engine):
                 # DownTownStudioApt to CourtBattle
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
                     o2.set_position([0.5, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, 0, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, 0, 0])
 
@@ -310,9 +334,13 @@ class Game(Engine):
                 # CourtBattle to SkyRiseFlat
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
                     o2.set_position([0.5, 0.13, -0.5])
                     o2.set_rotation([math.pi / 2, 0, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
                     o3.set_position([0.5, 0.13, -0.5])
                     o3.set_rotation([0, 0, 0])
 
@@ -320,8 +348,34 @@ class Game(Engine):
                 # SkyRiseFlat to Go
                 i = i + 1
                 if (self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
                     o2.set_position([0.5, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, math.pi / 2, 0])
                 elif (self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, math.pi / 2, 0])
+
+
+    #takes 2 float arrays and runs a translation for the current object 60 times between the 2 3d coorniate arrays
+    def translationAnimation(self, posFrom,  posTo):
+        o2 = self.player_objects[0]
+        o3 = self.player_objects[1]
+        time = 0
+        max = 60
+
+        while(time < max):
+
+            if (self.current_player == 1):
+
+                partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
+                o2.set_position(partialPos)
+
+            elif (self.current_player == 2):
+
+                partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
+                o3.set_position(partialPos)
+
+            time = time + 1
