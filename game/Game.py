@@ -392,7 +392,7 @@ class Game(Engine):
             # add some error message to end user?
             return
 
-        HouseNumber = action[-1:-1]
+        HouseNumber = action[-1:-1]-1
         actionLoc = action[:-1]
 
         if (actionLoc == "BuildHouseOnAirZandZRental"):
@@ -420,7 +420,7 @@ class Game(Engine):
             #add some error message to end user?
             return
 
-        HouseNumber = action[-1:-1]
+        HouseNumber = action[-1:-1]-1
         actionLoc = action[:-1]
 
         if (actionLoc == "RemoveHouseOnAirZandZRental"):
