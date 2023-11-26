@@ -26,16 +26,17 @@ struct environment
 };
 
 uniform mat4 view_matrix;
+uniform mat4 projection_matrix;
 uniform environment env;
 
 out vec4 outColor;
 
 void main()
 {
-     mat4 view_matrix_wo_translation = view_matrix;
+    mat4 view_matrix_wo_translation = view_matrix;
     view_matrix_wo_translation[3] = vec4(0.0, 0.0, 0.0, view_matrix[3][3]);
     mat4 invViewProjMatrix = inverse(projection_matrix * view_matrix_wo_translation);
-    vec4 inverseFragPos = invViewProjMatrix * vec4(fPos, 1.0);
+    vec4 inverseFragPos = invViewProjMatrix * vec4(fPosition, 1.0);
     vec3 dir = normalize(inverseFragPos.xyz / inverseFragPos.w);
     vec3 envColor = texture(env.texture, -dir).xyz;
     outColor = vec4(envColor, 1.0);

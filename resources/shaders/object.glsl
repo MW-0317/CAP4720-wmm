@@ -104,9 +104,10 @@ void main()
     vec3 reflectVector  = reflect(-viewVector, normal);
     vec3 envColor       = texture(env.texture, -reflectVector).xyz;
 
+    vec3 textureColor = vec3(0.0);
     if (mat.numTextures > 0)
     {
-        vec3 textureColor = mix(mainColor, envColor, mat.metallic);
+        textureColor = mix(mainColor, envColor, mat.metallic);
         currentColor = textureColor;
     }
 
@@ -144,6 +145,6 @@ void main()
         color = pow(color, vec3(1.0 / 2.2));
     }
 
-    fColor = vec4(color, 1.0);    
+    fColor = vec4(color, 1.0);
 }
 #endif

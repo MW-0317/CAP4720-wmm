@@ -123,7 +123,8 @@ class Texture:
         images = []
         for file in ["px", "nx", "py", "ny", "pz", "nz"]:
             w, h, image = Texture.load_image(folder + "/" + file + "." + image_type,
-                                             flip=False)
+                                             format="RGB",
+                                             flip=True)
             images.append([w, h, image])
 
         id = glGenTextures(1)
@@ -175,7 +176,7 @@ class Object:
         material = Material(0.5, 1.0)
         material.textures = textures
 
-        return Object(file, shader, textures=textures, material=material)
+        return Object(file, shader, material=material)
 
     def __init__(self, file, shader, *, textures: list = [], material: Material = None):
         if material == None:

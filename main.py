@@ -170,9 +170,15 @@ def main():
     s.add_object(h20)
     g.DarkBlueHouse_objects.append(h20)
 
+    # Skybox
+    skybox_textures = [Texture.cubemapFromFile("resources/textures/skybox", "bmp", "env.texture")]
+    shader_skybox = ShaderProgram("resources/shaders/skybox.glsl")
+    square_skybox = Object("resources/objects/square.obj", shader_skybox,
+                           textures=skybox_textures)
+    s.add_object(square_skybox)
 
     # Cat (player 1)
-    o2 = Object.create_silver_object("resources/objects/cat.obj")
+    o2 = Object.create_silver_object("resources/objects/cat.obj", skybox_textures)
     o2.set_scale([(2 / o2.diameter) / 5] * 3)
     o2.set_position([0, 0, 0])
     o2.set_rotation([math.pi / 2, 0, 0])
@@ -180,7 +186,7 @@ def main():
     g.player_objects.append(o2)
 
     # Wolf (player 2)
-    o3 = Object.create_silver_object("resources/objects/wolf.obj")
+    o3 = Object.create_silver_object("resources/objects/wolf.obj", skybox_textures)
     o3.set_scale([(2 / o3.diameter) / 5] * 3)
     o3.set_position([0, 0.13, 0])
     o3.set_rotation([0, 0, 0])
