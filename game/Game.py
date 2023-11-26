@@ -7,6 +7,7 @@ from core.pggui import Frame
 from core.shaderLoader import ShaderProgram
 from game.PlayerTurn import PlayerTurn
 from game.Gamestate import Gamestate
+import math
 
 import pygame as pg
 
@@ -25,6 +26,11 @@ class Game(Engine):
         self.endturn = False
         self.g = Gamestate()
         self.p = PlayerTurn(self)
+        self.player_objects = []
+        self.LightBlueHouse_objects = []
+        self.OrangeHouse_objects = []
+        self.YellowHouse_objects = []
+        self.DarkBlueHouse_objects = []
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
@@ -189,20 +195,244 @@ class Game(Engine):
     def PlacePlayer(self, Location: str):
 
         if(Location == "GO"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(0, oldlocation)
+
         if (Location == "AirZandZRental"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(1, oldlocation)
+
         if (Location == "Jail"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(2, oldlocation)
+
         if (Location == "JustVisiting"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(2, oldlocation)
+
         if (Location == "SuburbanTownHouse"):
-            x = 1
-        if (Location == "DownTownStudioApt"):
-            x = 1
-        if (Location == "CourtBattle"):
-            x = 1
-        if (Location == "SkyRiseFlat"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(3, oldlocation)
+
         if (Location == "FreeParking"):
-            x = 1
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(4, oldlocation)
+
+        if (Location == "DownTownStudioApt"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(5, oldlocation)
+
+        if (Location == "CourtBattle"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(6, oldlocation)
+
+        if (Location == "SkyRiseFlat"):
+            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
+            self.animationSeqeunce(7, oldlocation)
+
+
+    def animationSeqeunce(self, end: int, begin: int):
+
+        if(begin > end):
+            moves = begin + self.p.dice_roll
+            self.animationTree(begin, moves)
+        elif(begin < end):
+            moves = begin + self.p.dice_roll
+            self.animationTree(begin, moves)
+        elif(end == begin):
+            moves = 8
+            self.animationTree(begin, moves)
+
+    #animationTree covers the logic of calling animations X number of moves
+    def animationTree(self, begin: int, moves: int):
+        o2 = self.player_objects[0]
+        o3 = self.player_objects[1]
+
+        i = 0
+        while (i < moves):
+
+            if (begin == 0 and i == 0) or (i > 0 and i < moves):
+                # GO to AirZandZRental
+                i = i + 1
+                if(self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
+                    o2.set_position([0.0, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+                elif(self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
+                    o3.set_position([0.0, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi / 2, 0])
+
+            if (begin == 1 and i == 0) or (i > 0 and i < moves):
+                # AirZandZRental to Jail or JustVisiting
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
+                    o2.set_position([-0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
+                    o3.set_position([-0.5, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi, 0])
+
+            if (begin == 2 and i == 0) or (i > 0 and i < moves):
+                # Jail or JustVisiting to SuburbanTownHouse
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
+                    o2.set_position([-0.5, 0.13, 0.0])
+                    o2.set_rotation([math.pi / 2, math.pi, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
+                    o3.set_position([-0.5, 0.13, 0.0])
+                    o3.set_rotation([0, math.pi, 0])
+
+            if (begin == 3 and i == 0) or (i > 0 and i < moves):
+                # SuburbanTownHouse to FreeParking
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
+                    o2.set_position([-0.5, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
+                    o3.set_position([-0.5, 0.13, -0.5])
+                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+
+            if (begin == 4 and i == 0) or (i > 0 and i < moves):
+                # FreeParking to DownTownStudioApt
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
+                    o2.set_position([0.0, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
+                    o3.set_position([0.0, 0.13, 0.5])
+                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+
+            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+                # DownTownStudioApt to CourtBattle
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
+                    o2.set_position([0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, 0, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
+                    o3.set_position([0.5, 0.13, 0.5])
+                    o3.set_rotation([0, 0, 0])
+
+            if (begin == 6 and i == 0) or (i > 0 and i < moves):
+                # CourtBattle to SkyRiseFlat
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
+                    o2.set_position([0.5, 0.13, -0.5])
+                    o2.set_rotation([math.pi / 2, 0, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
+                    o3.set_position([0.5, 0.13, -0.5])
+                    o3.set_rotation([0, 0, 0])
+
+            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+                # SkyRiseFlat to Go
+                i = i + 1
+                if (self.current_player == 1):
+
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
+                    o2.set_position([0.5, 0.13, 0.5])
+                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+                elif (self.current_player == 2):
+
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
+                    o3.set_position([0.5, 0.13, 0.5])
+                    o3.set_rotation([0, math.pi / 2, 0])
+
+
+    #takes 2 float arrays and runs a translation for the current object 60 times between the 2 3d coorniate arrays
+    def translationAnimation(self, posFrom,  posTo):
+        o2 = self.player_objects[0]
+        o3 = self.player_objects[1]
+        time = 0
+        max = 60
+
+        while(time < max):
+
+            if (self.current_player == 1):
+
+                partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
+                o2.set_position(partialPos)
+
+            elif (self.current_player == 2):
+
+                partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
+                o3.set_position(partialPos)
+
+            time = time + 1
+
+    # GUI Call for house animation Processing for building a house, just moves the house above the board
+    def ProcessBuildHouse(self, properity: str):
+
+        action = self.g.buyHouse(properity, self.current_player)
+        if((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            # add some error message to end user?
+            return
+
+        HouseNumber = action[-1:-1]-1
+        actionLoc = action[:-1]
+
+        if (actionLoc == "BuildHouseOnAirZandZRental"):
+            house = self.LightBlueHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
+        if (actionLoc == "BuildHouseOnSuburbanTownHouse"):
+            house = self.OrangeHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
+        if (actionLoc == "BuildHouseOnDownTownStudioApt"):
+            house = self.YellowHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
+        if (actionLoc == "BuildHouseOnSkyRiseFlat"):
+            house = self.DarkBlueHouse_objects[HouseNumber]
+            house.set_position.y(0.06)
+
+
+    # GUI Call for house animation Processing for selling a house, just moves the house bellow the board
+    def ProcessSellHouse(self, properity: str):
+
+        action = self.g.sellHouse(properity, self.current_player)
+        if ((action == "Max number of houses have been built already") or (action == "Not Enough Houses to Sell")):
+            #add some error message to end user?
+            return
+
+        HouseNumber = action[-1:-1]-1
+        actionLoc = action[:-1]
+
+        if (actionLoc == "RemoveHouseOnAirZandZRental"):
+            house = self.LightBlueHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
+        if (actionLoc == "RemoveHouseOnSuburbanTownHouse"):
+            house = self.OrangeHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
+        if (actionLoc == "RemoveHouseOnDownTownStudioApt"):
+            house = self.YellowHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)
+        if (actionLoc == "RemoveHouseOnSkyRiseFlat"):
+            house = self.DarkBlueHouse_objects[HouseNumber]
+            house.set_position.y(-0.1)

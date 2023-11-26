@@ -371,3 +371,218 @@ class Gamestate:
             return 2000
         else:
             return 0
+
+    #sublogic to buy houses for the player
+    def buildhouse(self, properity: str):
+
+        if (properity == 'AirZandZRental'):
+            self.AirZandZRental[1] = self.AirZandZRental[1] + 1
+            return self.AirZandZRental[1]
+        elif (properity == 'DownTownStudioApt'):
+            self.DownTownStudioApt[1] = self.DownTownStudioApt[1] + 1
+            return self.DownTownStudioApt[1]
+        elif (properity == 'SkyRiseFlat'):
+            self.SkyRiseFlat[1] = self.SkyRiseFlat[1] + 1
+            return self.SkyRiseFlat[1]
+        elif (properity == 'SuburbanTownHouse'):
+            self.SuburbanTownHouse[1] = self.SuburbanTownHouse[1] + 1
+            return self.SuburbanTownHouse[1]
+
+    #sublogic to sell house owned by the player
+    def removehouse(self, properity: str):
+
+        if (properity == 'AirZandZRental'):
+            self.AirZandZRental[1] = self.AirZandZRental[1] - 1
+            return self.AirZandZRental[1]
+        elif (properity == 'DownTownStudioApt'):
+            self.DownTownStudioApt[1] = self.DownTownStudioApt[1] - 1
+            return self.DownTownStudioApt[1]
+        elif (properity == 'SkyRiseFlat'):
+            self.SkyRiseFlat[1] = self.SkyRiseFlat[1] - 1
+            return self.SkyRiseFlat[1]
+        elif (properity == 'SuburbanTownHouse'):
+            self.SuburbanTownHouse[1] = self.SuburbanTownHouse[1] - 1
+            return self.SuburbanTownHouse[1]
+
+    #logic to buy houses on properitys owned by the player, returns a string for animation action call
+    def buyHouse(self, properity: str, currentplayer: int):
+
+
+        if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] < 5)):
+            houseNumber = self.buildhouse(properity)
+            self.updateMoney(currentplayer, -50)
+            return "BuildHouseOnAirZandZRental"+str(houseNumber)
+
+        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] < 5)):
+            houseNumber = self.buildhouse(properity)
+            self.updateMoney(currentplayer, -100)
+            return "BuildHouseOnSuburbanTownHouse"+str(houseNumber)
+
+        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] < 5)):
+            houseNumber = self.buildhouse(properity)
+            self.updateMoney(currentplayer, -150)
+            return "BuildHouseOnDownTownStudioApt"+str(houseNumber)
+
+        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] < 5)):
+            houseNumber = self.buildhouse(properity)
+            self.updateMoney(currentplayer, -200)
+            return "BuildHouseOnSkyRiseFlat"+str(houseNumber)
+
+        else:
+            return "Max number of houses have been built already"
+
+
+    # logic to sell houses on properitys owned by the player, returns a string for animation action call
+    def sellHouse(self, properity: str, currentplayer: int):
+
+        if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] > 0)):
+            houseNumber = self.removehouse(properity)
+            self.updateMoney(currentplayer, 25)
+            return "RemoveHouseOnAirZandZRental"+str(houseNumber)
+
+        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] > 0)):
+            houseNumber = self.removehouse(properity)
+            self.updateMoney(currentplayer, 50)
+            return "RemoveHouseOnSuburbanTownHouse"+str(houseNumber)
+
+        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] > 0)):
+            houseNumber = self.removehouse(properity)
+            self.updateMoney(currentplayer, 75)
+            return "RemoveHouseOnDownTownStudioApt"+str(houseNumber)
+
+        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] > 0)):
+            houseNumber = self.removehouse(properity)
+            self.updateMoney(currentplayer, 100)
+            return "RemoveHouseOnSkyRiseFlat"+str(houseNumber)
+
+        else:
+            return "Not Enough Houses to Sell"
+
+    #changes mortage state to true
+    def mortgage(self, properity: str):
+
+        if (properity == 'AirZandZRental'):
+            self.AirZandZRental[2] = 1
+            return self.AirZandZRental[2]
+        elif (properity == 'DownTownStudioApt'):
+            self.DownTownStudioApt[2] = 1
+            return self.DownTownStudioApt[2]
+        elif (properity == 'SkyRiseFlat'):
+            self.SkyRiseFlat[2] = 1
+            return self.SkyRiseFlat[2]
+        elif (properity == 'SuburbanTownHouse'):
+            self.SuburbanTownHouse[2] = 1
+            return self.SuburbanTownHouse[2]
+
+    # changes mortgage state to false
+    def unmortgage(self, properity: str):
+
+        if (properity == 'AirZandZRental'):
+            self.AirZandZRental[2] = 0
+            return self.AirZandZRental[2]
+        elif (properity == 'DownTownStudioApt'):
+            self.DownTownStudioApt[2] = 0
+            return self.DownTownStudioApt[2]
+        elif (properity == 'SkyRiseFlat'):
+            self.SkyRiseFlat[2] = 0
+            return self.SkyRiseFlat[2]
+        elif (properity == 'SuburbanTownHouse'):
+            self.SuburbanTownHouse[2] = 0
+            return self.SuburbanTownHouse[2]
+
+    #if the properity is owned by the player and has no houses it can be mortaged, and give the player money
+    def mortgageProperity(self, properity: str, currentplayer: int):
+
+        if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] == 0)):
+            self.mortgage(properity)
+            self.updateMoney(currentplayer, 150)
+            return "Do Nothing"
+
+        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] == 0)):
+            self.mortgage(properity)
+            self.updateMoney(currentplayer, 225)
+            return "Do Nothing"
+
+        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] == 0)):
+            self.mortgage(properity)
+            self.updateMoney(currentplayer, 300)
+            return "Do Nothing"
+
+        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] == 0)):
+            self.mortgage(properity)
+            self.updateMoney(currentplayer, 400)
+            return "Do Nothing"
+
+    # if the properity is owned by the player and is mortaged it can be unmortaged
+    def unmortgageProperity(self, properity: str, currentplayer: int):
+
+        if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 1)):
+            self.unmortgage(properity)
+            self.updateMoney(currentplayer, -165)
+            return "Do Nothing"
+
+        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 1)):
+            self.unmortgage(properity)
+            self.updateMoney(currentplayer, -248)
+            return "Do Nothing"
+
+        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 1)):
+            self.unmortgage(properity)
+            self.updateMoney(currentplayer, -330)
+            return "Do Nothing"
+
+        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 1)):
+            self.unmortgage(properity)
+            self.updateMoney(currentplayer, -440)
+            return "Do Nothing"
+
+    #add money to the correct player based of the value passed, pass in negative values to subtract
+    def updateMoney(self, currentplayer: int, value: int):
+
+        if(currentplayer == 1):
+            self.player1[0] = self.player1[0] + value
+        elif(currentplayer == 2):
+            self.player2[0] = self.player2[0] + value
+
+
+    #get current old location
+    def getoldlocation(self, dicevalue: int, currentplayer: int):
+
+        if (currentplayer == 1):
+            playermove = self.player1[1] - dicevalue
+
+        elif (currentplayer == 2):
+            playermove = self.player2[1] - dicevalue
+
+
+        if (playermove % 8 == 0):
+            # do GO
+            return 0
+
+        if (playermove % 8 == 1):
+            # do LightBlue
+            return 1
+
+        if (playermove % 8 == 2):
+            # do Just Visiting
+            return 2
+
+        if (playermove % 8 == 3):
+            # do Orange
+            return 3
+
+        if (playermove % 8 == 4):
+            # do event/freeparking
+            return 4
+
+        if (playermove % 8 == 5):
+            # do Yellow
+            return 5
+
+        if (playermove % 8 == 6):
+            # do CourtBattle
+            return 6
+
+        if (playermove % 8 == 7):
+            # do Dark Blue
+            return 7
