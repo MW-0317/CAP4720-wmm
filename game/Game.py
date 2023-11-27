@@ -7,8 +7,9 @@ from core.pggui import Frame
 from core.shaderLoader import ShaderProgram
 from game.PlayerTurn import PlayerTurn
 from game.Gamestate import Gamestate
-import math
 
+import math
+import pyrr
 import pygame as pg
 
 from core.gui import *
@@ -22,8 +23,6 @@ class Game(Engine):
         # where player turn can be accessed from.
         #self.current_player : PlayerTurn = PlayerTurn()
         self.current_player = 1
-        self.diceroled = False
-        self.endturn = False
         self.g = Gamestate()
         self.p = PlayerTurn(self)
         self.player_objects = []
@@ -45,9 +44,9 @@ class Game(Engine):
     def frame_update(self, frame: Frame):
         # TODO: Temporarily show current player positions using a beam or cylinder
         
-        current_player_list = self.g.current_player_list(self.g.current_player)
+        current_player_list = self.g.current_player_list(self.current_player)
         #current_player_list[0] = self.money_slider.get_value()
-        current_player_list[1] = self.position_slider.get_value()
+        #current_player_list[1] = self.position_slider.get_value()
         
         # TODO: Set camera to side of board given position,
         # need to now get this into a function like getCurrentCameraPosition.
@@ -66,6 +65,7 @@ class Game(Engine):
             camera.pan = 90 * n
 
         self.money_label.set_text("Money: " + str(current_player_list[0]))
+        self.current_player_label.set_text("C: " + str(self.current_player))
         super().frame_update(frame)
 
     def run(self):
@@ -76,9 +76,24 @@ class Game(Engine):
         help = self.guiManager.create_text(self.HELP_MESSAGE, relative_rect=help_rect)
         help.hide()
 
-        money_height = self.ui_height * self.height_fraction * 1 / 2
-        money_rect = pg.Rect(self.width - self.ui_width, 0, self.ui_width, money_height)
+        total_height = 0
+        def add_box(height_fraction):
+            nonlocal total_height
+            rect = pg.Rect(self.width - self.ui_width, total_height, self.ui_width, self.ui_height * self.height_fraction * height_fraction)
+            total_height += self.ui_height * self.height_fraction * height_fraction
+            return rect
+
+        money_rect = add_box(1/2)
         self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.g.player1[0]))
+
+        current_player_rect = add_box(1/2)
+        self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="1")
+
+        roll_button_rect = add_box(1/2)
+        self.roll_button = self.guiManager.create_button(relative_rect=roll_button_rect, text="Roll", callback=lambda ui: self.p.roll_dice(self.g))
+
+        end_turn_rect = add_box(1/2)
+        self.end_turn_button = self.guiManager.create_button(relative_rect=end_turn_rect, text="End Turn", callback=lambda ui: self.p.end_turn())
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)
@@ -86,8 +101,8 @@ class Game(Engine):
 
         #self.player_turn.buy(self.gamestate, 1, "OfferToBuyAirZandZRental")
         #self.player_turn.roll_dice(self.gamestate, 1)
-        self.g.player1[3] = 3
-        self.p.prompt_jail(self.g, 1)
+        # self.g.player1[3] = 3
+        # self.p.prompt_jail(self.g, 1)
 
     def tick_update(self, tick: Tick):
         self.logicRun()
@@ -97,21 +112,19 @@ class Game(Engine):
         super().run()
 
     def playerturn(self):
-        if(self.current_player == 1):
-            self.current_player = 2
-        else:
-            self.current_player = 1
+        self.current_player = self.current_player % 2 + 1
+        self.roll_button.show()
+        self.p = PlayerTurn(self)
 
-
-    #Logical Processing of actions returned from gamestate and calls to animations. Needs GUI calls to be completed
+    # Logical Processing of actions returned from gamestate and calls to animations. 
+    # Needs GUI calls to be completed
     def logicRun(self):
-
-        # I will need to introduce many of these checkpoints
-        # that come from PlayerTurn / self.p
-        if self.p.dice_roll == -1: return
+        if self.guiManager.window_active: return
+        if not self.p.should_update_logic and self.p.dice_roll == -1: return
         self.p.prompt_jail(self.g, self.current_player)
 
         action = self.g.gamelocation(self.p.dice_roll, self.current_player)
+        print(action)
 
         if(action == "OfferToPayToLeaveJail"):
             if(self.GUIpayjail() == True):
@@ -172,9 +185,9 @@ class Game(Engine):
         elif (action == "EventMinus2x"):
             self.PlacePlayer("FreeParking")
 
+        self.p.dice_roll = -1
 
-
-        if(self.endturn == True):
+        if(self.p.should_end()):
             endingAction = self.g.endturn()
             if(endingAction == "Next Players Turn"):
                 self.playerturn()
@@ -183,7 +196,7 @@ class Game(Engine):
                 ... #gui display winner
             elif(endingAction == "Player 2 Won"):
                 ... #gui display winner
-        self.endturn == False
+        self.p.should_update_logic = False
 
     #GUI Call for JAIL
     def GUIpayjail(self):
@@ -366,6 +379,8 @@ class Game(Engine):
 
     #takes 2 float arrays and runs a translation for the current object 60 times between the 2 3d coorniate arrays
     def translationAnimation(self, posFrom,  posTo):
+        posFrom = pyrr.Vector3(posFrom)
+        posTo = pyrr.Vector3(posTo)
         o2 = self.player_objects[0]
         o3 = self.player_objects[1]
         time = 0

@@ -10,11 +10,20 @@ import random
 import game.Gamestate as gs
 Gamestate = gs.Gamestate
 
+class GuiAction:
+    NONE        = 0
+    ROLL        = 1
+    MORTGAGE    = 2
+    BANKRUPT    = 3
+    END         = 4
+
 class PlayerTurn:
-    wantsToBuy = False
-    dice_roll = -1
-    def __init__(self, engine: Engine):
-        self.engine: Engine = engine
+    def __init__(self, engine: Game):
+        self.engine: Game = engine
+        self.player_action = GuiAction.NONE
+        self.should_update_logic = False
+        self.dice_roll = -1
+        self.dice = (-1, -1)
     
     def rent(self, gamestate: Gamestate, player_index: int):
         if gamestate.players[player_index][0] < 0:
@@ -46,33 +55,34 @@ class PlayerTurn:
         
         def wantsToRoll(roll: True):
             if roll:
-                self.roll_dice(gamestate, player_index)
+                self.roll_dice(gamestate)
                 player_list[3] -= 1
 
         self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", 300, 300, 
                                                   "Roll!", "Pay $50", callback=wantsToRoll)
 
-    def roll_dice(self, gamestate: Gamestate, player_index: int):
+    def roll_dice(self, gamestate: Gamestate):
         """
         Provides GUI given a Game class.
         """
         def simulation():
             # TODO: Some simulation
-            self.dice_roll = random.randint(1, 6) + random.randint(1, 6)
-            # prop = gamestate.gamelocation(dice_val, player_index)
-            # self.buy(gamestate, player_index, prop)
+            self.dice = (random.randint(1, 6), random.randint(1, 6))
+            self.dice_roll = self.dice[0] + self.dice[1]
+            if self.dice[0] != self.dice[1]:
+                self.engine.roll_button.hide()
 
         self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)
-    
-    def start_turn(self, gamestate: Gamestate):
-        # TODO: Prompt button to roll dice
-        PlayerTurn.roll_dice()
-        self.wantsToBuy = False
-        self.dice_roll = -1
+
+    def tick(self, gamestate: Gamestate, player_index: int):
+        ...
+
+    def should_end(self):
+        return self.player_action == GuiAction.END
     
     def end_turn(self):
-        # TODO
-        ...
+        self.player_action = GuiAction.END
+        self.should_update_logic = True
 
     def bankrupt(self, gamestate: Gamestate):
         # TODO

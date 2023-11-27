@@ -41,9 +41,6 @@ class Gamestate:
         """
         return re.sub(r"(([A-Z](?!(and))[a-z]*)|[A-Z]|and)", r"\1 ", location)[:-1]
     
-    def swap_current_player(self):
-        self.current_player = self.current_player % 2 + 1
-    
     def current_player_list(self, current_player: int) -> list:
         """
         Helper function to get the list of the current player

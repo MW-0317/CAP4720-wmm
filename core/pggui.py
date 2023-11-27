@@ -84,6 +84,8 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.width                          = width
         self.height                         = height
         self.ui_elements: list[UIElement]   = []
+        self.ui_queue                       = []
+        self.window_active                  = False
         self.surface                        = surface
         pggui.UIManager.__init__(self, (width, height), theme_path="./resources/gui/theme.json")
         self._load_fonts()
@@ -100,6 +102,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         return window
     
     def query_window(self, text, width, height):
+        self.window_active = True
         window_rect = pg.Rect(self.width // 2 - width // 2, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
 
@@ -109,6 +112,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         text_size = (width - width // 15, height - height // 3)
         text_rect = pg.Rect(width // 2 - text_size[0] // 2, height // 15, text_size[0], text_size[1])
         window.create_text(relative_rect=text_rect, html_text=text)
+        self.ui_queue.append(window)
 
         return window, width, height
     
@@ -119,6 +123,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         window, width, height = self.query_window(text, width, height)
 
         def close_window_and_callback(ui_element, confimed: bool):
+            self.window_active = False
             window.kill()
             callback(confimed)
 
@@ -136,7 +141,9 @@ class guiManager(pggui.UIManager, ElementHolder):
         window, width, height = self.query_window(text, width, height)
 
         def close_window(ui_element):
+            self.window_active = False
             window.kill()
+            callback()
 
         okay_id = pggui.core.ObjectID("@query_button", "")
         okay_size = (width // 2.7, height // 8)
@@ -156,8 +163,12 @@ class guiManager(pggui.UIManager, ElementHolder):
 
     def process_events(self, event):
         super().process_events(event)
+    
+    def process_queue(self):
+        ...
 
     def frame_update(self, frame: Frame) -> Frame:
+        self.process_queue()
         self.update(frame.deltatime)
         self.draw(frame)
         return frame
