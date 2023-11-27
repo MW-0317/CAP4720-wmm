@@ -82,7 +82,6 @@ class PlayerTurn:
     
     def end_turn(self):
         self.player_action = GuiAction.END
-        self.should_update_logic = True
 
     def bankrupt(self, gamestate: Gamestate):
         # TODO

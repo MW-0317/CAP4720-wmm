@@ -120,6 +120,17 @@ class Game(Engine):
     # Needs GUI calls to be completed
     def logicRun(self):
         if self.guiManager.window_active: return
+
+        if(self.p.should_end()):
+            endingAction = self.g.endturn()
+            if(endingAction == "Next Players Turn"):
+                self.playerturn()
+
+            elif(endingAction == "Player 1 Won"):
+                ... #gui display winner
+            elif(endingAction == "Player 2 Won"):
+                ... #gui display winner
+        
         if not self.p.should_update_logic and self.p.dice_roll == -1: return
         self.p.prompt_jail(self.g, self.current_player)
 
@@ -186,16 +197,6 @@ class Game(Engine):
             self.PlacePlayer("FreeParking")
 
         self.p.dice_roll = -1
-
-        if(self.p.should_end()):
-            endingAction = self.g.endturn()
-            if(endingAction == "Next Players Turn"):
-                self.playerturn()
-
-            elif(endingAction == "Player 1 Won"):
-                ... #gui display winner
-            elif(endingAction == "Player 2 Won"):
-                ... #gui display winner
         self.p.should_update_logic = False
 
     #GUI Call for JAIL
@@ -247,10 +248,10 @@ class Game(Engine):
     def animationSeqeunce(self, end: int, begin: int):
 
         if(begin > end):
-            moves = begin + self.p.dice_roll
+            moves = self.p.dice_roll
             self.animationTree(begin, moves)
         elif(begin < end):
-            moves = begin + self.p.dice_roll
+            moves = self.p.dice_roll
             self.animationTree(begin, moves)
         elif(end == begin):
             moves = 8
@@ -262,11 +263,11 @@ class Game(Engine):
         o3 = self.player_objects[1]
 
         i = 0
+        current = begin
         while (i < moves):
 
-            if (begin == 0 and i == 0) or (i > 0 and i < moves):
+            if (current == 0):
                 # GO to AirZandZRental
-                i = i + 1
                 if(self.current_player == 1):
 
                     self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
@@ -278,9 +279,8 @@ class Game(Engine):
                     o3.set_position([0.0, 0.13, 0.5])
                     o3.set_rotation([0, math.pi / 2, 0])
 
-            if (begin == 1 and i == 0) or (i > 0 and i < moves):
+            if (current == 1):
                 # AirZandZRental to Jail or JustVisiting
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
@@ -292,9 +292,8 @@ class Game(Engine):
                     o3.set_position([-0.5, 0.13, 0.5])
                     o3.set_rotation([0, math.pi, 0])
 
-            if (begin == 2 and i == 0) or (i > 0 and i < moves):
+            if (current == 2):
                 # Jail or JustVisiting to SuburbanTownHouse
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
@@ -306,9 +305,8 @@ class Game(Engine):
                     o3.set_position([-0.5, 0.13, 0.0])
                     o3.set_rotation([0, math.pi, 0])
 
-            if (begin == 3 and i == 0) or (i > 0 and i < moves):
+            if (current == 3):
                 # SuburbanTownHouse to FreeParking
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
@@ -320,9 +318,8 @@ class Game(Engine):
                     o3.set_position([-0.5, 0.13, -0.5])
                     o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
-            if (begin == 4 and i == 0) or (i > 0 and i < moves):
+            if (current == 4):
                 # FreeParking to DownTownStudioApt
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
@@ -334,9 +331,8 @@ class Game(Engine):
                     o3.set_position([0.0, 0.13, 0.5])
                     o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
-            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+            if (current == 5):
                 # DownTownStudioApt to CourtBattle
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
@@ -348,9 +344,8 @@ class Game(Engine):
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, 0, 0])
 
-            if (begin == 6 and i == 0) or (i > 0 and i < moves):
+            if (current == 6):
                 # CourtBattle to SkyRiseFlat
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
@@ -362,9 +357,8 @@ class Game(Engine):
                     o3.set_position([0.5, 0.13, -0.5])
                     o3.set_rotation([0, 0, 0])
 
-            if (begin == 7 and i == 0) or (i > 0 and i < moves):
+            if (current == 7):
                 # SkyRiseFlat to Go
-                i = i + 1
                 if (self.current_player == 1):
 
                     self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
@@ -375,6 +369,8 @@ class Game(Engine):
                     self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, math.pi / 2, 0])
+            i += 1
+            current = (current + 1) % 8
 
 
     #takes 2 float arrays and runs a translation for the current object 60 times between the 2 3d coorniate arrays
