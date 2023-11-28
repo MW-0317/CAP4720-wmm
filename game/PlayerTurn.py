@@ -13,9 +13,11 @@ Gamestate = gs.Gamestate
 class GuiAction:
     NONE        = 0
     ROLL        = 1
-    MORTGAGE    = 2
-    BANKRUPT    = 3
-    END         = 4
+    BUY         = 2
+    MORTGAGE    = 3
+    BANKRUPT    = 4
+    LEAVE_JAIL  = 5
+    END         = 6
 
 class PlayerTurn:
     def __init__(self, engine: Game):
@@ -24,6 +26,8 @@ class PlayerTurn:
         self.should_update_logic = False
         self.dice_roll = -1
         self.dice = (-1, -1)
+
+        self.inJail = False
     
     def rent(self, gamestate: Gamestate, player_index: int):
         if gamestate.players[player_index][0] < 0:
@@ -43,7 +47,7 @@ class PlayerTurn:
 
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
-            self.wantsToBuy = confirmed
+            self.player_action = GuiAction.BUY
 
         self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
                                                         300, 300, callback=wantsToBuy)
@@ -55,22 +59,21 @@ class PlayerTurn:
         
         def wantsToRoll(roll: True):
             if roll:
-                self.roll_dice(gamestate)
-                player_list[3] -= 1
+                self.player_action = GuiAction.LEAVE_JAIL 
 
         self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", 300, 300, 
-                                                  "Roll!", "Pay $50", callback=wantsToRoll)
+                                                  "Pay $50", "No", callback=wantsToRoll)
 
     def roll_dice(self, gamestate: Gamestate):
-        """
-        Provides GUI given a Game class.
-        """
         def simulation():
             # TODO: Some simulation
             self.dice = (random.randint(1, 6), random.randint(1, 6))
-            #self.dice = (3, 3)
+            if self.engine.cheat_slider.get_value():
+                self.dice = (self.engine.dice_slider_1.get_value(), self.engine.dice_slider_2.get_value())
             self.dice_roll = self.dice[0] + self.dice[1]
-            if self.dice[0] != self.dice[1]:
+            print("LastLoc:", gamestate.current_player_list(self.engine.current_player)[1])
+            current_loc = (gamestate.current_player_list(self.engine.current_player)[1] + self.dice_roll) % 8
+            if self.dice[0] != self.dice[1] or current_loc == 6:
                 self.engine.roll_button.hide()
 
         self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)

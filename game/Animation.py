@@ -40,7 +40,7 @@ class Animation:
         valueTo     = keyframes[1].value
         valueFrom   = keyframes[0].value
 
-        #partial = (valueTo - valueFrom) * ((valueFrom - valueTo) / length - (self.total_ticks - last_tick))
+        #partialPos = posFrom + (posTo - posFrom) * ((maxtime - starttime) / (time-starttime))
         partial = ((self.total_ticks - last_tick) / length) * (valueTo) + (1 - (self.total_ticks - last_tick) / length) * (valueFrom)
         #print(partial)
 

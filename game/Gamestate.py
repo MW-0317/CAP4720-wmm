@@ -27,6 +27,7 @@ class Gamestate:
         self.player1 = [1500, 0, 200, 0]
         self.player2 = [1500, 0, 200, 0]
         self.current_player = 1
+        self.old_location = 0
 
         #owner, number of houses, mortgaged 0 for false
         self.AirZandZRental = [0, 0, 0]
@@ -74,9 +75,11 @@ class Gamestate:
 
         #updates player location
         if(currentplayer == 1):
+            self.old_location = self.player1[1]
             self.player1[1] = self.player1[1] + dicevalue
             playermove = self.player1[1]
         elif(currentplayer == 2):
+            self.old_location = self.player2[1]
             self.player2[1] = self.player2[1] + dicevalue
             playermove = self.player2[1]
 
@@ -544,6 +547,8 @@ class Gamestate:
 
     #get current old location
     def getoldlocation(self, dicevalue: int, currentplayer: int):
+
+        return self.old_location
 
         if (currentplayer == 1):
             playermove = self.player1[1] - dicevalue

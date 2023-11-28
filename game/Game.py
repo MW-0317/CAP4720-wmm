@@ -5,7 +5,7 @@ from core.Object import Object
 from core.Camera import Camera
 from core.pggui import Frame
 from core.shaderLoader import ShaderProgram
-from game.PlayerTurn import PlayerTurn
+from game.PlayerTurn import PlayerTurn, GuiAction
 from game.Gamestate import Gamestate
 from game.Animation import *
 
@@ -35,16 +35,26 @@ class Game(Engine):
         self.animations: list[Animation] = []
 
         self.test_gui = SimpleGUI("Debug & Testing")
-        self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
-        self.position_slider = self.test_gui.add_slider("Position", 0, 7, 0, 1)
-        self.g.player1[0] = self.money_slider.get_value()
-        self.g.player1[1] = self.position_slider.get_value()
+        self.cheat_slider = self.test_gui.add_checkbox("sv_cheats", False)
+        self.dice_slider_1 = self.test_gui.add_slider("Dice Roll #1", 1, 6, 1, 1)
+        self.dice_slider_2 = self.test_gui.add_slider("Dice Roll #2", 1, 6, 1, 1)
+        self.tps_slider = self.test_gui.add_slider("TPS", 1, 120, 60, 1)
+        self.dice_slider_1.get_value()
+        self.dice_slider_2.get_value()
 
         super().__init__(width, height)
 
         self.guiSetup()
 
     def frame_update(self, frame: Frame):
+        self.cheat_slider.get_value()
+        self.dice_slider_1.get_value()
+        self.dice_slider_2.get_value()
+
+        new_tps = self.tps_slider.get_value()
+        if new_tps != self.TPS and self.cheat_slider:
+            self.set_tps(new_tps)
+        
         # TODO: Temporarily show current player positions using a beam or cylinder
         
         current_player_list = self.g.current_player_list(self.current_player)
@@ -89,14 +99,23 @@ class Game(Engine):
         money_rect = add_box(1/2)
         self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.g.player1[0]))
 
+        stock_rect = add_box(1/2)
+        self.stock_label = self.guiManager.create_label(relative_rect=stock_rect, text="Stock: " + str(self.g.player1[2]))
+
         current_player_rect = add_box(1/2)
         self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="1")
 
         roll_button_rect = add_box(1/2)
-        self.roll_button = self.guiManager.create_button(relative_rect=roll_button_rect, text="Roll", callback=lambda ui: self.p.roll_dice(self.g))
+        def roll_dice(ui):
+            if self.guiManager.window_active and not self.animations == []: return
+            self.p.roll_dice(self.g)
+        self.roll_button = self.guiManager.create_button(relative_rect=roll_button_rect, text="Roll", callback=lambda ui: roll_dice(ui))
 
         end_turn_rect = add_box(1/2)
-        self.end_turn_button = self.guiManager.create_button(relative_rect=end_turn_rect, text="End Turn", callback=lambda ui: self.p.end_turn())
+        def end_turn(ui):
+            if self.guiManager.window_active and not self.animations == []: return
+            self.p.end_turn()
+        self.end_turn_button = self.guiManager.create_button(relative_rect=end_turn_rect, text="End Turn", callback=lambda ui: end_turn(ui))
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)
@@ -154,9 +173,10 @@ class Game(Engine):
         print(action)
 
         if(action == "OfferToPayToLeaveJail"):
-            if(self.GUIpayjail() == True):
+            if(self.GUIpayjail()):
                 self.g.leavejail(self.current_player)
                 action = self.g.gamelocation(self.p.dice_roll, self.current_player)
+            else: return
 
         if(action == "MoveToGo"):
             self.PlacePlayer("GO")
@@ -218,45 +238,56 @@ class Game(Engine):
 
     #GUI Call for JAIL
     def GUIpayjail(self):
-
         #update with GUI call for paying JAIL
-        return True
+        return self.p.player_action == GuiAction.LEAVE_JAIL
 
     #moves player to specified location on board.
     def PlacePlayer(self, Location: str):
 
+        oldlocation = 0
+        newlocation = 0
+
         if(Location == "GO"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(0, oldlocation)
+            newlocation = 0
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "AirZandZRental"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(1, oldlocation)
+            newlocation = 1
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "Jail" or Location == "JustVisiting"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(2, oldlocation)
+            newlocation = 2
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "SuburbanTownHouse"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(3, oldlocation)
+            newlocation = 3
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "FreeParking"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(4, oldlocation)
+            newlocation = 4
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "DownTownStudioApt"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(5, oldlocation)
+            newlocation = 5
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "CourtBattle"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(6, oldlocation)
+            newlocation = 6
+            self.animationSeqeunce(newlocation, oldlocation)
 
         if (Location == "SkyRiseFlat"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(7, oldlocation)
-
+            newlocation = 7
+            self.animationSeqeunce(newlocation, oldlocation)
+        
+        self.g.old_location = newlocation
 
     def animationSeqeunce(self, end: int, begin: int):
 

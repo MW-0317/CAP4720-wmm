@@ -48,6 +48,10 @@ class Engine:
             scene.delete()
         pg.quit()
         quit()
+
+    def set_tps(self, tps: int):
+        self.TPS = tps
+        self.INV_TPS = timedelta(seconds=1 / self.TPS)
     
     def run(self):
         deltatime = timedelta(0) # Time since last frame
@@ -76,13 +80,13 @@ class Engine:
                     self.draw = False
                 
                 self.guiManager.run_event(event)
-
+            
             while deltatick > self.INV_TPS:
                 tick = Tick()
                 tick.time = pg.time.get_ticks()
                 tick.deltatick = self.INV_TPS.seconds
                 self.tick_update(tick)
-                deltatick = timedelta(seconds=0)
+                deltatick -= self.INV_TPS
 
             pg.display.flip()
         self.delete()
