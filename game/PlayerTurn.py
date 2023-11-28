@@ -68,6 +68,7 @@ class PlayerTurn:
         def simulation():
             # TODO: Some simulation
             self.dice = (random.randint(1, 6), random.randint(1, 6))
+            #self.dice = (3, 3)
             self.dice_roll = self.dice[0] + self.dice[1]
             if self.dice[0] != self.dice[1]:
                 self.engine.roll_button.hide()

@@ -551,6 +551,8 @@ class Gamestate:
         elif (currentplayer == 2):
             playermove = self.player2[1] - dicevalue
 
+        print(playermove, "   ---   ", dicevalue, self.current_player_list(currentplayer))
+
 
         if (playermove % 8 == 0):
             # do GO

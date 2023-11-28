@@ -7,6 +7,7 @@ from core.pggui import Frame
 from core.shaderLoader import ShaderProgram
 from game.PlayerTurn import PlayerTurn
 from game.Gamestate import Gamestate
+from game.Animation import *
 
 import math
 import pyrr
@@ -30,6 +31,8 @@ class Game(Engine):
         self.OrangeHouse_objects = []
         self.YellowHouse_objects = []
         self.DarkBlueHouse_objects = []
+
+        self.animations: list[Animation] = []
 
         self.test_gui = SimpleGUI("Debug & Testing")
         self.money_slider = self.test_gui.add_slider("Money", 0, 1500, 1500, 10)
@@ -106,7 +109,20 @@ class Game(Engine):
 
     def tick_update(self, tick: Tick):
         self.logicRun()
+        self.update_animations(tick)
         super().tick_update(tick)
+
+    def update_animations(self, tick: Tick):
+        i = 0
+        animations_size = len(self.animations)
+        while i < animations_size:
+            if self.animations[i].is_empty():
+                self.animations.pop(i)
+                animations_size -= 1
+                continue
+            i+=1
+        if animations_size > 0:
+            self.animations[0].tick_update(tick)
 
     def run(self):
         super().run()
@@ -120,7 +136,7 @@ class Game(Engine):
     # Needs GUI calls to be completed
     def logicRun(self):
         if self.guiManager.window_active: return
-
+        if not self.animations == []: return
         if(self.p.should_end()):
             endingAction = self.g.endturn()
             if(endingAction == "Next Players Turn"):
@@ -177,6 +193,7 @@ class Game(Engine):
 
         elif (action == "MoveToCourtBattleThenJail"):
             self.PlacePlayer("CourtBattle")
+            self.p.dice_roll = 4
             self.PlacePlayer("Jail")
 
         elif (action == "OfferToBuySkyRiseFlat"):
@@ -216,11 +233,7 @@ class Game(Engine):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
             self.animationSeqeunce(1, oldlocation)
 
-        if (Location == "Jail"):
-            oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
-            self.animationSeqeunce(2, oldlocation)
-
-        if (Location == "JustVisiting"):
+        if (Location == "Jail" or Location == "JustVisiting"):
             oldlocation = self.g.getoldlocation(self.p.dice_roll, self.current_player)
             self.animationSeqeunce(2, oldlocation)
 
@@ -247,6 +260,7 @@ class Game(Engine):
 
     def animationSeqeunce(self, end: int, begin: int):
 
+        print(end, begin)
         if(begin > end):
             moves = self.p.dice_roll
             self.animationTree(begin, moves)
@@ -265,6 +279,7 @@ class Game(Engine):
         i = 0
         current = begin
         while (i < moves):
+            print(current, i, moves)
 
             if (current == 0):
                 # GO to AirZandZRental
@@ -335,12 +350,12 @@ class Game(Engine):
                 # DownTownStudioApt to CourtBattle
                 if (self.current_player == 1):
 
-                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
+                    self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
                     o2.set_position([0.5, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, 0, 0])
                 elif (self.current_player == 2):
 
-                    self.translationAnimation([0.0, 0.13, 0.5], [0.5, 0.13, 0.5])
+                    self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, 0, 0])
 
@@ -348,12 +363,12 @@ class Game(Engine):
                 # CourtBattle to SkyRiseFlat
                 if (self.current_player == 1):
 
-                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
                     o2.set_position([0.5, 0.13, -0.5])
                     o2.set_rotation([math.pi / 2, 0, 0])
                 elif (self.current_player == 2):
 
-                    self.translationAnimation([0.5, 0.13, 0.5], [0.5, 0.13, -0.5])
+                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
                     o3.set_position([0.5, 0.13, -0.5])
                     o3.set_rotation([0, 0, 0])
 
@@ -361,12 +376,12 @@ class Game(Engine):
                 # SkyRiseFlat to Go
                 if (self.current_player == 1):
 
-                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
+                    self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
                     o2.set_position([0.5, 0.13, 0.5])
                     o2.set_rotation([math.pi / 2, math.pi / 2, 0])
                 elif (self.current_player == 2):
 
-                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.5])
+                    self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
                     o3.set_position([0.5, 0.13, 0.5])
                     o3.set_rotation([0, math.pi / 2, 0])
             i += 1
@@ -382,19 +397,33 @@ class Game(Engine):
         time = 0
         max = 60
 
-        while(time < max):
+        start = Keyframe(posFrom, 30)
+        end = Keyframe(posTo, 0)
 
-            if (self.current_player == 1):
+        if self.current_player == 1:
+            anim = Animation(o2)
+            anim.positions.append(start)
+            anim.positions.append(end)
+            self.animations.append(anim)
+        elif self.current_player == 2:
+            anim = Animation(o3)
+            anim.positions.append(start)
+            anim.positions.append(end)
+            self.animations.append(anim)
 
-                partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
-                o2.set_position(partialPos)
+        # while(time < max):
 
-            elif (self.current_player == 2):
+        #     if (self.current_player == 1):
 
-                partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
-                o3.set_position(partialPos)
+        #         partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
+        #         o2.set_position(partialPos)
 
-            time = time + 1
+        #     elif (self.current_player == 2):
+
+        #         partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
+        #         o3.set_position(partialPos)
+
+        #     time = time + 1
 
     # GUI Call for house animation Processing for building a house, just moves the house above the board
     def ProcessBuildHouse(self, properity: str):
