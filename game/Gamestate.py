@@ -192,25 +192,25 @@ class Gamestate:
     def getevent(self, currentplayer: int):
         if(self.event == 0):
             if (currentplayer == 1):
-                self.player1[0] = self.player1[0] + 100
+                self.player1[0] = self.player1[0] - 100
             elif (currentplayer == 2):
-                self.player2[0] = self.player2[0] + 100
+                self.player2[0] = self.player2[0] - 100
             self.event = self.event + 1
             return "EventAdd100"
 
         if (self.event == 1):
             if (currentplayer == 1):
-                self.player1[0] = self.player1[2]*2
+                self.player1[2] = self.player1[2]*2
             elif (currentplayer == 2):
-                self.player2[0] = self.player2[2]*2
+                self.player2[2] = self.player2[2]*2
             self.event = self.event + 1
             return "EventPlus2x"
 
         if (self.event == 2):
             if (currentplayer == 1):
-                self.player1[0] = self.player1[2]*0.5
+                self.player1[2] = self.player1[2]//2
             elif (currentplayer == 2):
-                self.player2[0] = self.player2[2]*0.5
+                self.player2[2] = self.player2[2]//2
             self.event = self.event + 1
             return "EventMinus2x"
 
