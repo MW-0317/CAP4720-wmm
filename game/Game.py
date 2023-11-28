@@ -367,19 +367,20 @@ class Game(Engine):
     def translationAnimation(self, posFrom,  posTo):
         o2 = self.player_objects[0]
         o3 = self.player_objects[1]
-        time = 0
-        max = 60
+        starttime = 0
+        time = starttime
+        maxtime = 60
 
         while(time < max):
 
             if (self.current_player == 1):
 
-                partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
+                partialPos = posFrom + (posTo - posFrom) * ((maxtime - starttime) / (time-starttime))
                 o2.set_position(partialPos)
 
             elif (self.current_player == 2):
 
-                partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
+                partialPos = posFrom + (posTo - posFrom) * ((maxtime - starttime) / (time-starttime))
                 o3.set_position(partialPos)
 
             time = time + 1
