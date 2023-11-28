@@ -426,7 +426,7 @@ class Game(Engine):
         o2 = self.player_objects[0]
         o3 = self.player_objects[1]
 
-        start = Keyframe(posFrom, max)
+        start = Keyframe(posFrom, 60)
         end = Keyframe(posTo, 0)
 
         if self.current_player == 1:
