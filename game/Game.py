@@ -31,6 +31,7 @@ class Game(Engine):
         self.OrangeHouse_objects = []
         self.YellowHouse_objects = []
         self.DarkBlueHouse_objects = []
+        self.EventCard_objects = []
 
         self.animations: list[Animation] = []
 
@@ -226,15 +227,64 @@ class Game(Engine):
 
         elif (action == "EventAdd100"):
             self.PlacePlayer("FreeParking")
+            self.animationEvents(action)
 
         elif (action == "EventPlus2x"):
             self.PlacePlayer("FreeParking")
+            self.animationEvents(action)
 
         elif (action == "EventMinus2x"):
             self.PlacePlayer("FreeParking")
+            self.animationEvents(action)
 
         self.p.dice_roll = -1
         self.p.should_update_logic = False
+
+    #event card animations
+    def animationEvents(self, action: str):
+
+        c1 = self.EventCard_objects[0]
+        c2 = self.EventCard_objects[1]
+        c3 = self.EventCard_objects[2]
+
+        if (action == "EventAdd100"):
+
+            self.displayCard(0)
+            # returns card to deck
+            c1.set_position([0, 0.025, 0])
+            c1.set_rotation([0, math.pi / 2, math.pi / 2])
+
+        elif (action == "EventPlus2x"):
+
+            self.displayCard(1)
+            # returns card to deck
+            c2.set_position([0, 0.020, 0])
+            c2.set_rotation([0, math.pi / 2, math.pi / 2])
+
+        elif (action == "EventMinus2x"):
+
+            self.displayCard(2)
+            #returns card to deck
+            c3.set_position([0, 0.015, 0])
+            c3.set_rotation([0, math.pi / 2, math.pi / 2])
+
+    #place card in front of camera for a time
+    def displayCard(self, eventnumber: int):
+
+        start = 0
+        end = 60
+
+        card = self.EventCard_objects[eventnumber]
+        card.set_position([0, 1, 2]) #this is the eye?
+        card.set_rotation([0, math.pi / 2, math.pi / 2])
+
+        while(start < end):
+
+            #add a tick waiting here to display it x ticks
+
+            start += 1
+
+
 
     #GUI Call for JAIL
     def GUIpayjail(self):
