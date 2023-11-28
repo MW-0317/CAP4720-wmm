@@ -371,7 +371,7 @@ class Game(Engine):
         time = starttime
         maxtime = 60
 
-        while(time < max):
+        while(time < maxtime):
 
             if (self.current_player == 1):
 
