@@ -440,20 +440,6 @@ class Game(Engine):
             anim.positions.append(end)
             self.animations.append(anim)
 
-        # while(time < max):
-
-        #     if (self.current_player == 1):
-
-        #         partialPos = (posTo-posFrom) * ((posFrom-posTo) / (max-time))
-        #         o2.set_position(partialPos)
-
-        #     elif (self.current_player == 2):
-
-        #         partialPos = (posTo - posFrom) * ((posFrom - posTo) / (max - time))
-        #         o3.set_position(partialPos)
-
-        #     time = time + 1
-
     # GUI Call for house animation Processing for building a house, just moves the house above the board
     def ProcessBuildHouse(self, properity: str):
 
