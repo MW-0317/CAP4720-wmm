@@ -53,8 +53,9 @@ class Material:
     def enable(self, shader):
         i = 0
         for texture in self.textures:
-            texture.enable(i)
-            if texture.name != "": shader[texture.name] = i
+            if texture.name != "":
+                texture.enable(i)
+                shader[texture.name] = i
             i += 1
 
         shader_dict = {

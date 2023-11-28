@@ -11,7 +11,7 @@ import math
 # Texture loading
 def load_object_with_texture(object_file, texture_file) -> Object:
     shader = ShaderProgram("resources/shaders/object.glsl")
-    textures = [Texture.textureFromFile(texture_file, "mat.albedoTexture")]
+    textures = [Texture.create_empty(), Texture.textureFromFile(texture_file, "mat.albedoTexture")]
     return Object(object_file, shader, textures=textures)
 
 

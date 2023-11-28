@@ -52,7 +52,7 @@ class Game(Engine):
         self.dice_slider_2.get_value()
 
         new_tps = self.tps_slider.get_value()
-        if new_tps != self.TPS and self.cheat_slider:
+        if new_tps != self.TPS and self.cheat_slider.get_value():
             self.set_tps(new_tps)
         
         # TODO: Temporarily show current player positions using a beam or cylinder
@@ -425,10 +425,8 @@ class Game(Engine):
         posTo = pyrr.Vector3(posTo)
         o2 = self.player_objects[0]
         o3 = self.player_objects[1]
-        time = 0
-        max = 60
 
-        start = Keyframe(posFrom, 30)
+        start = Keyframe(posFrom, max)
         end = Keyframe(posTo, 0)
 
         if self.current_player == 1:
