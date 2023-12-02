@@ -44,3 +44,6 @@ class Camera(Object.Object):
 
     def set_aspect(self, aspect: float):
         self.aspect = aspect
+
+    def get_position(self):
+        return self.position
