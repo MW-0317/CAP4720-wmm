@@ -19,6 +19,23 @@ class Game(Engine):
     HELP_MESSAGE = """<font size=5> Where's My Money -- Help </font>
     <p> Where's my money is a simple version of the classic board game monopoly. </p>
     """
+    positions = [
+        [ 0.5,  0.13,  0.5], # 0
+        [ 0.0,  0.13,  0.5], # 1
+        [-0.5,  0.13,  0.5], # 2
+        [-0.5,  0.13,  0.0], # 3
+        [-0.5,  0.13, -0.5], # 4
+        [ 0.0,  0.13, -0.5], # 5
+        [ 0.5,  0.13, -0.5], # 6
+        [ 0.5,  0.13,  0.0]  # 7
+    ]
+    @staticmethod
+    def rotations(index):
+        return [0, (((index + 1) % 4) * math.pi) / 2, 0]
+    rotation_offsets = [
+        [math.pi / 2,   0,  0], # Player 1
+        [0,             0,  0]  # Player 2
+    ]
     def __init__(self, width: int, height: int):
         # To be replaced with self.game_state, 
         # where player turn can be accessed from.
@@ -77,7 +94,8 @@ class Game(Engine):
             camera.set_position((camera_pos[0], 1, camera_pos[1]))
             camera.pan = 90 * n
 
-        self.money_label.set_text("Money: " + str(current_player_list[0]))
+        self.money_label_1.set_text("P1: " + str(self.g.player1[0]))
+        self.money_label_2.set_text("P2: " + str(self.g.player2[0]))
         self.current_player_label.set_text("C: " + str(self.current_player))
         super().frame_update(frame)
 
@@ -95,12 +113,32 @@ class Game(Engine):
             rect = pg.Rect(self.width - self.ui_width, total_height, self.ui_width, self.ui_height * self.height_fraction * height_fraction)
             total_height += self.ui_height * self.height_fraction * height_fraction
             return rect
+        
+        total_width = 0
+        def add_box_bottom():
+            nonlocal total_width
+            rect = pg.Rect(total_width, self.height - self.ui_height * self.height_fraction, self.ui_width, self.ui_height * self.height_fraction * 1/2)
+            total_width += self.ui_width
+            return rect
+        
+        total_width2 = 0
+        def add_box_bottom2():
+            nonlocal total_width2
+            rect = pg.Rect(total_width2, self.height - self.ui_height * self.height_fraction * 1/2, self.ui_width, self.ui_height * self.height_fraction * 1/2)
+            total_width2 += self.ui_width
+            return rect
 
-        money_rect = add_box(1/2)
-        self.money_label = self.guiManager.create_label(relative_rect=money_rect, text="Money: " + str(self.g.player1[0]))
+        money_rect = add_box_bottom()
+        self.money_label_1 = self.guiManager.create_label(relative_rect=money_rect, text="P1: " + str(self.g.player1[0]))
 
-        stock_rect = add_box(1/2)
-        self.stock_label = self.guiManager.create_label(relative_rect=stock_rect, text="Stock: " + str(self.g.player1[2]))
+        money_rect = add_box_bottom()
+        self.money_label_2 = self.guiManager.create_label(relative_rect=money_rect, text="P2: " + str(self.g.player2[0]))
+
+        stock_rect = add_box_bottom2()
+        self.stock_label_1 = self.guiManager.create_label(relative_rect=stock_rect, text="Stock: " + str(self.g.player1[2]))
+
+        stock_rect = add_box_bottom2()
+        self.stock_label_2 = self.guiManager.create_label(relative_rect=stock_rect, text="Stock: " + str(self.g.player2[2]))
 
         current_player_rect = add_box(1/2)
         self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="1")
@@ -304,141 +342,123 @@ class Game(Engine):
 
     #animationTree covers the logic of calling animations X number of moves
     def animationTree(self, begin: int, moves: int):
-        o2 = self.player_objects[0]
-        o3 = self.player_objects[1]
-
+        player = self.current_player - 1
         i = 0
         current = begin
+        current = current % 8
         while (i < moves):
-            print(current, i, moves)
+            anim = Animation(self.player_objects[player])
+            anim.translation(self.positions[current], self.positions[(current + 1) % 8], 30)
+            anim.rotation(pyrr.Vector3(self.rotations(current // 2)) + pyrr.Vector3(self.rotation_offsets[player]),
+                           pyrr.Vector3(self.rotations((current + 1) // 2)) + pyrr.Vector3(self.rotation_offsets[player]), 30)
+            self.animations.append(anim)
 
-            if (current == 0):
-                # GO to AirZandZRental
-                if(self.current_player == 1):
+            # if (current == 0):
+            #     # GO to AirZandZRental
+            #     if(self.current_player == 1):
 
-                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
-                    o2.set_position([0.0, 0.13, 0.5])
-                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
-                elif(self.current_player == 2):
+            #         self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
+            #         o2.set_position([0.0, 0.13, 0.5])
+            #         o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+            #     elif(self.current_player == 2):
 
-                    self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
-                    o3.set_position([0.0, 0.13, 0.5])
-                    o3.set_rotation([0, math.pi / 2, 0])
+            #         self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
+            #         o3.set_position([0.0, 0.13, 0.5])
+            #         o3.set_rotation([0, math.pi / 2, 0])
 
-            if (current == 1):
-                # AirZandZRental to Jail or JustVisiting
-                if (self.current_player == 1):
+            # if (current == 1):
+            #     # AirZandZRental to Jail or JustVisiting
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
-                    o2.set_position([-0.5, 0.13, 0.5])
-                    o2.set_rotation([math.pi / 2, math.pi, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
+            #         o2.set_position([-0.5, 0.13, 0.5])
+            #         o2.set_rotation([math.pi / 2, math.pi, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
-                    o3.set_position([-0.5, 0.13, 0.5])
-                    o3.set_rotation([0, math.pi, 0])
+            #         self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
+            #         o3.set_position([-0.5, 0.13, 0.5])
+            #         o3.set_rotation([0, math.pi, 0])
 
-            if (current == 2):
-                # Jail or JustVisiting to SuburbanTownHouse
-                if (self.current_player == 1):
+            # if (current == 2):
+            #     # Jail or JustVisiting to SuburbanTownHouse
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
-                    o2.set_position([-0.5, 0.13, 0.0])
-                    o2.set_rotation([math.pi / 2, math.pi, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
+            #         o2.set_position([-0.5, 0.13, 0.0])
+            #         o2.set_rotation([math.pi / 2, math.pi, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
-                    o3.set_position([-0.5, 0.13, 0.0])
-                    o3.set_rotation([0, math.pi, 0])
+            #         self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
+            #         o3.set_position([-0.5, 0.13, 0.0])
+            #         o3.set_rotation([0, math.pi, 0])
 
-            if (current == 3):
-                # SuburbanTownHouse to FreeParking
-                if (self.current_player == 1):
+            # if (current == 3):
+            #     # SuburbanTownHouse to FreeParking
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
-                    o2.set_position([-0.5, 0.13, -0.5])
-                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
+            #         o2.set_position([-0.5, 0.13, -0.5])
+            #         o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
-                    o3.set_position([-0.5, 0.13, -0.5])
-                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+            #         self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
+            #         o3.set_position([-0.5, 0.13, -0.5])
+            #         o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
-            if (current == 4):
-                # FreeParking to DownTownStudioApt
-                if (self.current_player == 1):
+            # if (current == 4):
+            #     # FreeParking to DownTownStudioApt
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
-                    o2.set_position([0.0, 0.13, -0.5])
-                    o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
+            #         o2.set_position([0.0, 0.13, -0.5])
+            #         o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
-                    o3.set_position([0.0, 0.13, 0.5])
-                    o3.set_rotation([0, (3 * math.pi) / 2, 0])
+            #         self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
+            #         o3.set_position([0.0, 0.13, 0.5])
+            #         o3.set_rotation([0, (3 * math.pi) / 2, 0])
 
-            if (current == 5):
-                # DownTownStudioApt to CourtBattle
-                if (self.current_player == 1):
+            # if (current == 5):
+            #     # DownTownStudioApt to CourtBattle
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
-                    o2.set_position([0.5, 0.13, 0.5])
-                    o2.set_rotation([math.pi / 2, 0, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
+            #         o2.set_position([0.5, 0.13, 0.5])
+            #         o2.set_rotation([math.pi / 2, 0, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
-                    o3.set_position([0.5, 0.13, 0.5])
-                    o3.set_rotation([0, 0, 0])
+            #         self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
+            #         o3.set_position([0.5, 0.13, 0.5])
+            #         o3.set_rotation([0, 0, 0])
 
-            if (current == 6):
-                # CourtBattle to SkyRiseFlat
-                if (self.current_player == 1):
+            # if (current == 6):
+            #     # CourtBattle to SkyRiseFlat
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
-                    o2.set_position([0.5, 0.13, -0.5])
-                    o2.set_rotation([math.pi / 2, 0, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
+            #         o2.set_position([0.5, 0.13, -0.5])
+            #         o2.set_rotation([math.pi / 2, 0, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
-                    o3.set_position([0.5, 0.13, -0.5])
-                    o3.set_rotation([0, 0, 0])
+            #         self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
+            #         o3.set_position([0.5, 0.13, -0.5])
+            #         o3.set_rotation([0, 0, 0])
 
-            if (current == 7):
-                # SkyRiseFlat to Go
-                if (self.current_player == 1):
+            # if (current == 7):
+            #     # SkyRiseFlat to Go
+            #     if (self.current_player == 1):
 
-                    self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
-                    o2.set_position([0.5, 0.13, 0.5])
-                    o2.set_rotation([math.pi / 2, math.pi / 2, 0])
-                elif (self.current_player == 2):
+            #         self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
+            #         o2.set_position([0.5, 0.13, 0.5])
+            #         o2.set_rotation([math.pi / 2, math.pi / 2, 0])
+            #     elif (self.current_player == 2):
 
-                    self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
-                    o3.set_position([0.5, 0.13, 0.5])
-                    o3.set_rotation([0, math.pi / 2, 0])
+            #         # self.player_objects[self.current_player - 1]
+            #         self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
+            #         o3.set_position([0.5, 0.13, 0.5])
+            #         o3.set_rotation([0, math.pi / 2, 0])
             i += 1
             current = (current + 1) % 8
-
-
-    #takes 2 float arrays and runs a translation for the current object 60 times between the 2 3d coorniate arrays
-    def translationAnimation(self, posFrom,  posTo):
-        posFrom = pyrr.Vector3(posFrom)
-        posTo = pyrr.Vector3(posTo)
-        o2 = self.player_objects[0]
-        o3 = self.player_objects[1]
-
-        start = Keyframe(posFrom, 60)
-        end = Keyframe(posTo, 0)
-
-        if self.current_player == 1:
-            anim = Animation(o2)
-            anim.positions.append(start)
-            anim.positions.append(end)
-            self.animations.append(anim)
-        elif self.current_player == 2:
-            anim = Animation(o3)
-            anim.positions.append(start)
-            anim.positions.append(end)
-            self.animations.append(anim)
 
     # GUI Call for house animation Processing for building a house, just moves the house above the board
     def ProcessBuildHouse(self, properity: str):

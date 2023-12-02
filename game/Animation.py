@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable
 
 from core.Object import Object
@@ -11,6 +12,25 @@ class Keyframe:
         self.length = length
 
 class Animation:
+    def movement(self, fromValue, toValue, time, keyframes):
+        fromValue = pyrr.Vector3(fromValue)
+        toValue   = pyrr.Vector3(toValue)
+
+        start = Keyframe(fromValue, time)
+        end = Keyframe(toValue, 0)
+
+        keyframes.append(start)
+        keyframes.append(end)
+
+    def translation(self, posFrom, posTo, time):
+        self.movement(posFrom, posTo, time, self.positions)
+
+    def rotation(self, rotFrom, rotTo, time):
+        self.movement(rotFrom, rotTo, time, self.rotations)
+
+    def scale(self, scaleFrom, scaleTo, time):
+        self.movement(scaleFrom, scaleTo, time, self.scales)
+
     def __init__(self, anim_object: Object):
         self.anim_object: Object = anim_object
         self.total_ticks = 0

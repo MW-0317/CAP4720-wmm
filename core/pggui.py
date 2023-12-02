@@ -9,7 +9,10 @@ from core.Interval import Frame
 GUI using Pygame Gui
 Author: Mark Williams
 --------------------
-This will need to be rewritten soon, there's too much rewritting of previously written code.
+Still need to write
+    - Card Animation
+    - Dice on screen
+    - Money gained "+(num)" next to money count
 """
 
 class UIElement (pggui.core.UIElement):
