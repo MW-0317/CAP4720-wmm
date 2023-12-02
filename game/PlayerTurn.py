@@ -48,6 +48,7 @@ class PlayerTurn:
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
             self.player_action = GuiAction.BUY
+            self.should_update_logic = True
 
         self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
                                                         300, 300, callback=wantsToBuy)
@@ -57,15 +58,17 @@ class PlayerTurn:
         if player_list[3] <= 0:
             return
         
-        def wantsToRoll(roll: True):
+        def wantsToRoll(roll):
             if roll:
                 self.player_action = GuiAction.LEAVE_JAIL 
+            else:
+                self.engine.roll_button.hide()
 
         self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", 300, 300, 
                                                   "Pay $50", "No", callback=wantsToRoll)
 
     def roll_dice(self, gamestate: Gamestate):
-        def simulation():
+        def simulation(ui):
             # TODO: Some simulation
             self.dice = (random.randint(1, 6), random.randint(1, 6))
             if self.engine.cheat_slider.get_value():

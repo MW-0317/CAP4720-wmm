@@ -173,7 +173,7 @@ class Gamestate:
             if (currentplayer == 1):
                 self.player1[0] = self.player1[0] + self.player1[2]
             elif (currentplayer == 2):
-                self.player2[0] = self.player1[0] + self.player2[2]
+                self.player2[0] = self.player2[0] + self.player2[2]
 
     #call this when a player chooses to leave jail by paying 50
     def leavejail(self, currentplayer: int):

@@ -12,6 +12,7 @@ from game.Animation import *
 import math
 import pyrr
 import pygame as pg
+from pygame_gui.core import ObjectID
 
 from core.gui import *
 
@@ -41,6 +42,7 @@ class Game(Engine):
         # where player turn can be accessed from.
         #self.current_player : PlayerTurn = PlayerTurn()
         self.current_player = 1
+        self.action = ""
         self.g = Gamestate()
         self.p = PlayerTurn(self)
         self.player_objects = []
@@ -96,6 +98,13 @@ class Game(Engine):
 
         self.money_label_1.set_text("P1: " + str(self.g.player1[0]))
         self.money_label_2.set_text("P2: " + str(self.g.player2[0]))
+        self.stock_label_1.set_text("Stock: " + str(self.g.player1[2]))
+        self.stock_label_2.set_text("Stock: " + str(self.g.player2[2]))
+        if self.last_money[0] != self.g.player1[0] or self.last_money[1] != self.g.player2[0]:
+            self.update_label_1.update_value(str(self.g.player1[0] - self.last_money[0]))
+            self.update_label_2.update_value(str(self.g.player2[0] - self.last_money[1]))
+            self.last_money[0] = self.g.player1[0]
+            self.last_money[1] = self.g.player2[0]
         self.current_player_label.set_text("C: " + str(self.current_player))
         super().frame_update(frame)
 
@@ -127,6 +136,13 @@ class Game(Engine):
             rect = pg.Rect(total_width2, self.height - self.ui_height * self.height_fraction * 1/2, self.ui_width, self.ui_height * self.height_fraction * 1/2)
             total_width2 += self.ui_width
             return rect
+        
+        total_width3 = 0
+        def add_box_bottom3():
+            nonlocal total_width3
+            rect = pg.Rect(total_width3, self.height - self.ui_height * self.height_fraction * 5/4, self.ui_width, self.ui_height * self.height_fraction * 1/4)
+            total_width3 += self.ui_width
+            return rect
 
         money_rect = add_box_bottom()
         self.money_label_1 = self.guiManager.create_label(relative_rect=money_rect, text="P1: " + str(self.g.player1[0]))
@@ -139,6 +155,14 @@ class Game(Engine):
 
         stock_rect = add_box_bottom2()
         self.stock_label_2 = self.guiManager.create_label(relative_rect=stock_rect, text="Stock: " + str(self.g.player2[2]))
+
+        self.last_money = [self.g.player1[0], self.g.player2[0]]
+
+        update_rect = add_box_bottom3()
+        self.update_label_1 = self.guiManager.create_update_label(relative_rect=update_rect, text="", object_id=ObjectID(class_id="@update_label", object_id=""))
+
+        update_rect = add_box_bottom3()
+        self.update_label_2 = self.guiManager.create_update_label(relative_rect=update_rect, text="", object_id=ObjectID(class_id="@update_label", object_id=""))
 
         current_player_rect = add_box(1/2)
         self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="1")
@@ -176,6 +200,7 @@ class Game(Engine):
             if self.animations[i].is_empty():
                 self.animations.pop(i)
                 animations_size -= 1
+                if animations_size == 0: self.p.should_update_logic = True
                 continue
             i+=1
         if animations_size > 0:
@@ -194,7 +219,7 @@ class Game(Engine):
     def logicRun(self):
         if self.guiManager.window_active: return
         if not self.animations == []: return
-        if(self.p.should_end()):
+        if self.p.should_end():
             endingAction = self.g.endturn()
             if(endingAction == "Next Players Turn"):
                 self.playerturn()
@@ -205,70 +230,73 @@ class Game(Engine):
                 ... #gui display winner
         
         if not self.p.should_update_logic and self.p.dice_roll == -1: return
-        self.p.prompt_jail(self.g, self.current_player)
 
-        action = self.g.gamelocation(self.p.dice_roll, self.current_player)
-        print(action)
+        if self.p.dice_roll != -1:
+            self.action = self.g.gamelocation(self.p.dice_roll, self.current_player)
+        elif self.p.player_action != GuiAction.BUY:
+            self.p.buy(self.g, self.current_player, self.action)
+        print("Player Action:", self.p.player_action)
+        print(self.action)
+        print(self.p.should_update_logic)
 
-        if(action == "OfferToPayToLeaveJail"):
-            if(self.GUIpayjail()):
+        if(self.action == "OfferToPayToLeaveJail"):
+            if self.GUIpayjail():
                 self.g.leavejail(self.current_player)
-                action = self.g.gamelocation(self.p.dice_roll, self.current_player)
-            else: return
+            else: 
+                self.p.prompt_jail(self.g, self.current_player)
 
-        if(action == "MoveToGo"):
+        if(self.action == "MoveToGo"):
             self.PlacePlayer("GO")
 
-        elif (action == "OfferToBuyAirZandZRental"):
+        elif (self.action == "OfferToBuyAirZandZRental"):
             self.PlacePlayer("AirZandZRental")
-            if (self.GUIpayjail() == True):
-                self.g.BuyAirZandZRental(self.current_player)
+            if self.wantsToBuy():
+                self.g.BuyAirZandZRental(self.current_player)       
 
-
-        elif (action == "MoveToAirZandZRental"):
+        elif (self.action == "MoveToAirZandZRental"):
             self.PlacePlayer("AirZandZRental")
 
-        elif (action == "MoveToJustVisiting"):
+        elif (self.action == "MoveToJustVisiting"):
             self.PlacePlayer("JustVisiting")
 
-        elif (action == "OfferToBuySuburbanTownHouse"):
+        elif (self.action == "OfferToBuySuburbanTownHouse"):
             self.PlacePlayer("SuburbanTownHouse")
-            if (self.GUIpayjail() == True):
+            if self.wantsToBuy():
                 self.g.BuySuburbanTownHouse(self.current_player)
 
 
-        elif (action == "MoveToSuburbanTownHouse"):
+        elif (self.action == "MoveToSuburbanTownHouse"):
             self.PlacePlayer("SuburbanTownHouse")
 
-        elif (action == "OfferToBuyDownTownStudioApt"):
+        elif (self.action == "OfferToBuyDownTownStudioApt"):
             self.PlacePlayer("DownTownStudioApt")
-            if (self.GUIpayjail() == True):
+            if self.wantsToBuy():
                 self.g.BuyDownTownStudioApt(self.current_player)
 
 
-        elif (action == "MoveToDownTownStudioApt"):
+        elif (self.action == "MoveToDownTownStudioApt"):
             self.PlacePlayer("DownTownStudioApt")
 
-        elif (action == "MoveToCourtBattleThenJail"):
+        elif (self.action == "MoveToCourtBattleThenJail" and self.p.dice_roll != -1):
             self.PlacePlayer("CourtBattle")
             self.p.dice_roll = 4
             self.PlacePlayer("Jail")
 
-        elif (action == "OfferToBuySkyRiseFlat"):
-            if (self.GUIpayjail() == True):
+        elif (self.action == "OfferToBuySkyRiseFlat"):
+            self.PlacePlayer("SkyRiseFlat")
+            if self.wantsToBuy():
                 self.g.BuySkyRiseFlat(self.current_player)
+
+        elif (self.action == "MoveToSkyRiseFlat"):
             self.PlacePlayer("SkyRiseFlat")
 
-        elif (action == "MoveToSkyRiseFlat"):
-            self.PlacePlayer("SkyRiseFlat")
-
-        elif (action == "EventAdd100"):
+        elif (self.action == "EventAdd100"):
             self.PlacePlayer("FreeParking")
 
-        elif (action == "EventPlus2x"):
+        elif (self.action == "EventPlus2x"):
             self.PlacePlayer("FreeParking")
 
-        elif (action == "EventMinus2x"):
+        elif (self.action == "EventMinus2x"):
             self.PlacePlayer("FreeParking")
 
         self.p.dice_roll = -1
@@ -277,10 +305,14 @@ class Game(Engine):
     #GUI Call for JAIL
     def GUIpayjail(self):
         #update with GUI call for paying JAIL
-        return self.p.player_action == GuiAction.LEAVE_JAIL
+        return self.p.player_action == GuiAction.LEAVE_JAIL or self.g.current_player_list(self.current_player)[3] <= 0
+    
+    def wantsToBuy(self):
+        return self.p.player_action == GuiAction.BUY
 
     #moves player to specified location on board.
     def PlacePlayer(self, Location: str):
+        if self.p.dice_roll == -1: return
 
         oldlocation = 0
         newlocation = 0
@@ -353,110 +385,6 @@ class Game(Engine):
                            pyrr.Vector3(self.rotations((current + 1) // 2)) + pyrr.Vector3(self.rotation_offsets[player]), 30)
             self.animations.append(anim)
 
-            # if (current == 0):
-            #     # GO to AirZandZRental
-            #     if(self.current_player == 1):
-
-            #         self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
-            #         o2.set_position([0.0, 0.13, 0.5])
-            #         o2.set_rotation([math.pi / 2, math.pi / 2, 0])
-            #     elif(self.current_player == 2):
-
-            #         self.translationAnimation([0.5, 0.13, 0.5], [0.0, 0.13, 0.5])
-            #         o3.set_position([0.0, 0.13, 0.5])
-            #         o3.set_rotation([0, math.pi / 2, 0])
-
-            # if (current == 1):
-            #     # AirZandZRental to Jail or JustVisiting
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
-            #         o2.set_position([-0.5, 0.13, 0.5])
-            #         o2.set_rotation([math.pi / 2, math.pi, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([0.0, 0.13, 0.5], [-0.5, 0.13, 0.5])
-            #         o3.set_position([-0.5, 0.13, 0.5])
-            #         o3.set_rotation([0, math.pi, 0])
-
-            # if (current == 2):
-            #     # Jail or JustVisiting to SuburbanTownHouse
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
-            #         o2.set_position([-0.5, 0.13, 0.0])
-            #         o2.set_rotation([math.pi / 2, math.pi, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([-0.5, 0.13, 0.5], [-0.5, 0.13, 0.0])
-            #         o3.set_position([-0.5, 0.13, 0.0])
-            #         o3.set_rotation([0, math.pi, 0])
-
-            # if (current == 3):
-            #     # SuburbanTownHouse to FreeParking
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
-            #         o2.set_position([-0.5, 0.13, -0.5])
-            #         o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([-0.5, 0.13, 0.0], [-0.5, 0.13, -0.5])
-            #         o3.set_position([-0.5, 0.13, -0.5])
-            #         o3.set_rotation([0, (3 * math.pi) / 2, 0])
-
-            # if (current == 4):
-            #     # FreeParking to DownTownStudioApt
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
-            #         o2.set_position([0.0, 0.13, -0.5])
-            #         o2.set_rotation([math.pi / 2, (3 * math.pi) / 2, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([-0.5, 0.13, -0.5], [0.0, 0.13, -0.5])
-            #         o3.set_position([0.0, 0.13, 0.5])
-            #         o3.set_rotation([0, (3 * math.pi) / 2, 0])
-
-            # if (current == 5):
-            #     # DownTownStudioApt to CourtBattle
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
-            #         o2.set_position([0.5, 0.13, 0.5])
-            #         o2.set_rotation([math.pi / 2, 0, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([0.0, 0.13, -0.5], [0.5, 0.13, -0.5])
-            #         o3.set_position([0.5, 0.13, 0.5])
-            #         o3.set_rotation([0, 0, 0])
-
-            # if (current == 6):
-            #     # CourtBattle to SkyRiseFlat
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
-            #         o2.set_position([0.5, 0.13, -0.5])
-            #         o2.set_rotation([math.pi / 2, 0, 0])
-            #     elif (self.current_player == 2):
-
-            #         self.translationAnimation([0.5, 0.13, -0.5], [0.5, 0.13, 0.0])
-            #         o3.set_position([0.5, 0.13, -0.5])
-            #         o3.set_rotation([0, 0, 0])
-
-            # if (current == 7):
-            #     # SkyRiseFlat to Go
-            #     if (self.current_player == 1):
-
-            #         self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
-            #         o2.set_position([0.5, 0.13, 0.5])
-            #         o2.set_rotation([math.pi / 2, math.pi / 2, 0])
-            #     elif (self.current_player == 2):
-
-            #         # self.player_objects[self.current_player - 1]
-            #         self.translationAnimation([0.5, 0.13, 0.0], [0.5, 0.13, 0.5])
-            #         o3.set_position([0.5, 0.13, 0.5])
-            #         o3.set_rotation([0, math.pi / 2, 0])
             i += 1
             current = (current + 1) % 8
 

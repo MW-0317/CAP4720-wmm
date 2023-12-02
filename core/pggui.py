@@ -3,7 +3,7 @@ from typing import Callable, Annotated
 import pygame as pg
 import pygame_gui as pggui
 
-from core.Interval import Frame
+from core.Interval import Frame, Tick
 
 """
 GUI using Pygame Gui
@@ -38,6 +38,9 @@ class UIElement (pggui.core.UIElement):
 
     def get_super_container(self):
         return self.container
+    
+    def tick(self, tick: Tick):
+        return tick
 
 class ElementHolder:
     def get_container(self):
@@ -57,6 +60,9 @@ class ElementHolder:
     
     def create_label(self, *args, **kwargs):
         return self.create_element(*args, **kwargs, classType=Label)
+    
+    def create_update_label(self, *args, **kwargs):
+        return self.create_element(*args, **kwargs, classType=UpdateLabel)
 
     def create_text(self, *args, **kwargs):
         return self.create_element(*args, **kwargs, classType=Text)
@@ -75,6 +81,21 @@ class Label (UIElement, pggui.elements.UILabel):
     def __init__(self, manager, *args, **kwargs):
         UIElement.__init__(self, manager)
         pggui.elements.UILabel.__init__(self, *args, **kwargs)
+
+class UpdateLabel (UIElement, pggui.elements.UILabel):
+    def __init__(self, manager, *args, **kwargs):
+        UIElement.__init__(self, manager)
+        pggui.elements.UILabel.__init__(self, *args, **kwargs)
+
+        #self.opacity = 0
+
+    def tick(self, tick: Tick):
+        #self.opacity -= 1
+        return tick
+
+    def update_value(self, text):
+        self.opacity = 100
+        self.set_text(text)
 
 class Text (UIElement, pggui.elements.UITextBox):
     def __init__(self, manager, *args, **kwargs):
@@ -146,7 +167,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         def close_window(ui_element):
             self.window_active = False
             window.kill()
-            callback()
+            callback(ui_element)
 
         okay_id = pggui.core.ObjectID("@query_button", "")
         okay_size = (width // 2.7, height // 8)
@@ -175,6 +196,11 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.update(frame.deltatime)
         self.draw(frame)
         return frame
+    
+    def tick_update(self, tick: Tick) -> Tick:
+        for ui in self.ui_elements:
+            ui.tick(tick)
+        return tick
 
     def draw(self, frame: Frame):
         self.draw_ui(self.surface)

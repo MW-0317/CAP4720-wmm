@@ -100,6 +100,7 @@ class Engine:
     def tick_update(self, tick: Tick):
         for scene in self.scenes:
             tick = scene.tick_update(tick)
+        self.guiManager.tick_update(tick)
 
     def add_scene(self, scene: Scene):
         self.scenes.append(scene)
