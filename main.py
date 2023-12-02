@@ -26,6 +26,34 @@ def main():
     o.set_scale([2 / o.diameter] * 3)
     s.add_object(o)
 
+    #event cards
+    c0 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventCover.png")
+    c0.set_scale([(2 / c0.diameter) / 3] * 3)
+    c0.set_position([0, 0.03, 0])
+    c0.set_rotation([0, math.pi/2, math.pi/2])
+    s.add_object(c0)
+
+    c1 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventAdd100.png")
+    c1.set_scale([(2 / c0.diameter)/3] * 3)
+    c1.set_position([0, 0.025, 0])
+    c1.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(c1)
+    g.EventCard_objects.append(c1)
+
+    c2 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventMinus2x.png")
+    c2.set_scale([(2 / c0.diameter) / 3] * 3)
+    c2.set_position([0, 0.020, 0])
+    c2.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(c2)
+    g.EventCard_objects.append(c2)
+
+    c3 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventPlus2x.png")
+    c3.set_scale([(2 / c0.diameter) / 3] * 3)
+    c3.set_position([0, 0.015, 0])
+    c3.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(c3)
+    g.EventCard_objects.append(c3)
+
     # Houses for Light Blue
     h1 = Object.create_silver_object("resources/objects/house.obj")
     h1.set_scale([(2 / h1.diameter) / 15] * 3)
