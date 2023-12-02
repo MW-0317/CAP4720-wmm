@@ -275,15 +275,34 @@ class Game(Engine):
         end = 60
 
         card = self.EventCard_objects[eventnumber]
-        card.set_position([0, 1, 2]) #this is the eye?
-        card.set_rotation([0, math.pi / 2, math.pi / 2])
 
-        while(start < end):
+        # Attach someObject to the animation
+        anim = Animation(card)
 
-            #add a tick waiting here to display it x ticks
+        # Create Keyframes to raise card from deck
+        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 30)
+        middle = Keyframe(pyrr.Vector3([0, 0.6, 0]), 45)
 
-            start += 1
+        # Create Keyframes to make the card rotate to face the camera
+        rotate = Keyframe(pyrr.Vector3([0, math.pi / 2, math.pi / 2]), 5)
+        rotateEnd = Keyframe(pyrr.Vector3([math.pi, math.pi / 2, math.pi / 2]), 0)
 
+        # Create Keyframes to hold the card in front of the camera for 120 ticks
+        hold = Keyframe(pyrr.Vector3([0.3, 0.6, 0.3]), 120) #need to update with camera pos!!!
+        end = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
+        # Must be pyrr.Vector3 or else it won't do arithmetic properly in Animation
+        # Last keyframe *must* be zero ticks long
+
+        # Append keyframes to animation
+        anim.positions.append(start)  # Can also be animation.scales or animation.rotations
+        anim.positions.append(middle)
+        anim.rotations.append(rotate)
+        anim.rotations.append(rotateEnd)
+        anim.positions.append(hold)
+        anim.positions.append(end)
+
+        # Add to game animations queue
+        self.animations.append(anim)  # Assumes we are located in the Game class
 
 
     #GUI Call for JAIL
