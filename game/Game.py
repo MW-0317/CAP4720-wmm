@@ -293,15 +293,15 @@ class Game(Engine):
 
         elif (self.action == "EventAdd100"):
             self.PlacePlayer("FreeParking")
-            self.animationEvents(action)
+            self.animationEvents(self.action)
 
         elif (self.action == "EventPlus2x"):
             self.PlacePlayer("FreeParking")
-            self.animationEvents(action)
+            self.animationEvents(self.action)
 
         elif (self.action == "EventMinus2x"):
             self.PlacePlayer("FreeParking")
-            self.animationEvents(action)
+            self.animationEvents(self.action)
 
         self.p.dice_roll = -1
         self.p.should_update_logic = False
