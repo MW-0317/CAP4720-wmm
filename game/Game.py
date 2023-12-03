@@ -19,14 +19,13 @@ from core.gui import *
 class Game(Engine):
     HELP_MESSAGE = """<font size=5> Where's My Money -- RULES </font>
     <p> Where's my money is a simple version of the classic board game monopoly. </p>
-    <p> </p>
     <p> 1. Players may enter the negative to buy houses and properties. </p>
     <p> 2. Players will lose the game if they end the turn in the negative. </p>
     <p> 3. When a player goes around the board or lands on go they receive money based on there stock value. </p>
     <p> 4. When a player lands on Court Battle they go straight to jail and do not receive money for passing GO. </p>
     <p> 5. When a player is sent to jail they are kept in jail for 3 turns, they may pay $50 to leave jail early on there
      next roll or will have to pay $50 after 3 turns to leave jail.</p>
-    <p> 6. When A PLAYER Lands ON Tent Street Draw An EVENT CARD.</p>
+    <p> 6. When a player lands on Tent Street draw and event card.</p>
     """
     positions = [
         [ 0.5,  0.13,  0.5], # 0
@@ -117,7 +116,7 @@ class Game(Engine):
             self.update_label_2.update_value(str(self.g.player2[0] - self.last_money[1]))
             self.last_money[0] = self.g.player1[0]
             self.last_money[1] = self.g.player2[0]
-        self.current_player_label.set_text("C: " + str(self.current_player))
+        self.current_player_label.set_text("Player " + str(self.current_player) + " Turn")
         super().frame_update(frame)
 
     def run(self):
