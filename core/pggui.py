@@ -134,9 +134,9 @@ class guiManager(pggui.UIManager, ElementHolder):
         window = Window(self.manager, *args, **kwargs)
         return window
     
-    def query_window(self, text, width, height):
+    def query_window(self, text, width, height, offset=0):
         self.window_active = True
-        window_rect = pg.Rect(self.width // 2 - width // 2 + self.width // 5, self.height // 2 - height // 2, width, height)
+        window_rect = pg.Rect(self.width // 2 - width // 2 + offset, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
 
         width = width - 30
@@ -163,8 +163,8 @@ class guiManager(pggui.UIManager, ElementHolder):
     def query_option(self, text, width, height, first_option="One", second_option="Two", callback: Callable = lambda ui: None):
         ...
     
-    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = lambda ui: None):
-        window, width, height = self.query_window(text, width, height)
+    def query_confirmation(self, text, width, height, confirm_text="Confirm", decline_text="Decline", callback: Callable = lambda ui: None, offset=0):
+        window, width, height = self.query_window(text, width, height, offset)
 
         def close_window_and_callback(ui_element, confimed: bool):
             self.window_active = False

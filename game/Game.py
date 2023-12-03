@@ -173,6 +173,9 @@ class Game(Engine):
         roll_button_rect = add_box(1/2)
         def roll_dice(ui):
             if self.guiManager.window_active and not self.animations == []: return
+            if self.g.current_player_list(self.current_player)[3] > 0:
+                self.p.roll_dice = 0
+                return
             self.p.roll_dice(self.g)
         self.roll_button = self.guiManager.create_button(relative_rect=roll_button_rect, text="Roll", callback=lambda ui: roll_dice(ui))
 
@@ -226,11 +229,8 @@ class Game(Engine):
             endingAction = self.g.endturn()
             if(endingAction == "Next Players Turn"):
                 self.playerturn()
-
-            elif(endingAction == "Player 1 Won"):
-                ... #gui display winner
-            elif(endingAction == "Player 2 Won"):
-                ... #gui display winner
+            else:
+                self.guiManager.query_message(endingAction, 300, 300, "LET'S GO!")
         
         if not self.p.should_update_logic and self.p.dice_roll == -1: return
 
@@ -243,8 +243,10 @@ class Game(Engine):
         print(self.p.should_update_logic)
 
         if(self.action == "OfferToPayToLeaveJail"):
+            print(self.GUIpayjail())
             if self.GUIpayjail():
                 self.g.leavejail(self.current_player)
+                self.roll_button.show()
             else: 
                 self.p.prompt_jail(self.g, self.current_player)
 
