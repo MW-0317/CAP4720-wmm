@@ -174,7 +174,7 @@ class Game(Engine):
         def roll_dice(ui):
             if self.guiManager.window_active and not self.animations == []: return
             if self.g.current_player_list(self.current_player)[3] > 0:
-                self.p.roll_dice = 0
+                self.p.dice_roll = 0
                 return
             self.p.roll_dice(self.g)
         self.roll_button = self.guiManager.create_button(relative_rect=roll_button_rect, text="Roll", callback=lambda ui: roll_dice(ui))
