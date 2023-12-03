@@ -169,11 +169,11 @@ class Gamestate:
 
     #this method add money to the player that passed or landed on go based on their go value
     def passgo(self, currentplayer: int):
-        if (self.event == 0):
-            if (currentplayer == 1):
-                self.player1[0] = self.player1[0] + self.player1[2]
-            elif (currentplayer == 2):
-                self.player2[0] = self.player2[0] + self.player2[2]
+
+        if (currentplayer == 1):
+            self.player1[0] = self.player1[0] + self.player1[2]
+        elif (currentplayer == 2):
+            self.player2[0] = self.player2[0] + self.player2[2]
 
     #call this when a player chooses to leave jail by paying 50
     def leavejail(self, currentplayer: int):
@@ -190,6 +190,10 @@ class Gamestate:
 
     #this method returns the name of the event and proccess the event
     def getevent(self, currentplayer: int):
+
+        if(self.event >= 2):
+            self.event = 0
+
         if(self.event == 0):
             if (currentplayer == 1):
                 self.player1[0] = self.player1[0] - 100
