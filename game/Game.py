@@ -26,6 +26,9 @@ class Game(Engine):
     <p> 5. When a player is sent to jail they are kept in jail for 3 turns, they may pay $50 to leave jail early on their
      next roll or will have to pay $50 after 3 turns to leave jail.</p>
     <p> 6. When a player lands on Tent Street draw and event card.</p>
+    <p> 7. When selling a house, players receive only half the value of the house.</p>
+    <p> 8. When a player lands on another players property they pay the other player rent based number of houses and
+     corresponding rent value listed on the property.</p>
     """
     positions = [
         [ 0.5,  0.13,  0.5], # 0
