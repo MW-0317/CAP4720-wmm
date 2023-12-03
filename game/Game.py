@@ -17,8 +17,18 @@ from pygame_gui.core import ObjectID
 from core.gui import *
 
 class Game(Engine):
-    HELP_MESSAGE = """<font size=5> Where's My Money -- Help </font>
+    HELP_MESSAGE = """<font size=5> Where's My Money -- RULES </font>
     <p> Where's my money is a simple version of the classic board game monopoly. </p>
+    <p> 1. Players may enter the negative to buy houses and properties. </p>
+    <p> 2. Players will lose the game if they end the turn in the negative. </p>
+    <p> 3. When a player goes around the board or lands on go they receive money based on their stock value. </p>
+    <p> 4. When a player lands on Court Battle they go straight to jail and do not receive money for passing GO. </p>
+    <p> 5. When a player is sent to jail they are kept in jail for 3 turns, they may pay $50 to leave jail early on their
+     next roll or will have to pay $50 after 3 turns to leave jail.</p>
+    <p> 6. When a player lands on Tent Street draw and event card.</p>
+    <p> 7. When selling a house, players receive only half the value of the house.</p>
+    <p> 8. When a player lands on another players property they pay the other player rent based number of houses and
+     corresponding rent value listed on the property.</p>
     """
     positions = [
         [ 0.5,  0.13,  0.5], # 0
@@ -100,23 +110,23 @@ class Game(Engine):
             camera.set_position((camera_pos[0], 1, camera_pos[1]))
             camera.pan = 90 * n
 
-        self.money_label_1.set_text("P1: " + str(self.g.player1[0]))
-        self.money_label_2.set_text("P2: " + str(self.g.player2[0]))
-        self.stock_label_1.set_text("Stock: " + str(self.g.player1[2]))
-        self.stock_label_2.set_text("Stock: " + str(self.g.player2[2]))
+        self.money_label_1.set_text("P1: $" + str(self.g.player1[0]))
+        self.money_label_2.set_text("P2: $" + str(self.g.player2[0]))
+        self.stock_label_1.set_text("Stock: $" + str(self.g.player1[2]))
+        self.stock_label_2.set_text("Stock: $" + str(self.g.player2[2]))
         if self.last_money[0] != self.g.player1[0] or self.last_money[1] != self.g.player2[0]:
             self.update_label_1.update_value(str(self.g.player1[0] - self.last_money[0]))
             self.update_label_2.update_value(str(self.g.player2[0] - self.last_money[1]))
             self.last_money[0] = self.g.player1[0]
             self.last_money[1] = self.g.player2[0]
-        self.current_player_label.set_text("Player " + str(self.current_player))
+        self.current_player_label.set_text("Player " + str(self.current_player) + " Turn")
         super().frame_update(frame)
 
     def run(self):
         super().run()
 
     def guiSetup(self):
-        help_rect = pg.Rect(20, 20, self.ui_width, self.ui_height * self.height_fraction * 2)
+        help_rect = pg.Rect(20, 20, self.ui_width*2.5, self.ui_height * self.height_fraction * 2)
         help = self.guiManager.create_text(self.HELP_MESSAGE, relative_rect=help_rect)
         help.hide()
 
@@ -424,19 +434,13 @@ class Game(Engine):
         if self.p.dice_roll == -1: return
         card = self.EventCard_objects[eventnumber]
 
-        image = self.EventCard_iamges[eventnumber]
-        anim = GuiAnimation(image)
-        start = Keyframe(pg.Vector2([0, 0]), 100)
-        end = Keyframe(pg.Vector2([self.width, self.height]), 0)
-        anim.positions = [start, end]
-        self.animations.append(anim)
 
         # Attach someObject to the animation
         anim = Animation(card)
 
         # Create Keyframes to raise card from deck
-        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 30)
-        middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 300)
+        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 150)
+        middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 0)
         end1 = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
 
         # Append keyframes to animation
@@ -446,6 +450,14 @@ class Game(Engine):
 
         # Add to game animations queue
         self.animations.append(anim)  # Assumes we are located in the Game class
+
+        image = self.EventCard_iamges[eventnumber]
+        anim = GuiAnimation(image)
+        start = Keyframe(pg.Vector2([self.width / 5, self.height/ 5]), 120)
+        middle = Keyframe(pg.Vector2([self.width / 5, self.height / 5]), 0)
+        end = Keyframe(pg.Vector2([-1000, -1000]), 0)
+        anim.positions = [start, middle, end]
+        self.animations.append(anim)
 
     #GUI Call for JAIL
     def GUIpayjail(self):
