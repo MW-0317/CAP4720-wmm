@@ -110,6 +110,12 @@ class Game(Engine):
             camera.set_position((camera_pos[0], 1, camera_pos[1]))
             camera.pan = 90 * n
 
+        if self.p.dice[0] == -1:
+            self.rolled_dice_label.hide()
+        else:
+            self.rolled_dice_label.show()
+            self.rolled_dice_label.set_text(f"Roll: {self.p.dice[0]} : {self.p.dice[1]}")
+            
         self.money_label_1.set_text("P1: $" + str(self.g.player1[0]))
         self.money_label_2.set_text("P2: $" + str(self.g.player2[0]))
         self.stock_label_1.set_text("Stock: $" + str(self.g.player1[2]))
@@ -180,6 +186,9 @@ class Game(Engine):
 
         current_player_rect = add_box(1/2)
         self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="Player 1")
+
+        rolled_dice_rect = add_box(1/2)
+        self.rolled_dice_label = self.guiManager.create_label(relative_rect=rolled_dice_rect, text="Roll: ")
 
         roll_button_rect = add_box(1/2)
         def roll_dice(ui):

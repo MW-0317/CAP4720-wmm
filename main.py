@@ -42,14 +42,14 @@ def main():
     s.add_object(c1)
     g.EventCard_objects.append(c1)
 
-    c2 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventMinus2x.png")
+    c2 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventPlus2x.png")
     c2.set_scale([(2 / c0.diameter) / 3] * 3)
     c2.set_position([0, 0.020, 0])
     c2.set_rotation([0, math.pi / 2, math.pi / 2])
     s.add_object(c2)
     g.EventCard_objects.append(c2)
 
-    c3 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventPlus2x.png")
+    c3 = load_object_with_texture("resources/objects/square.obj", "./resources/images/EventMinus2x.png")
     c3.set_scale([(2 / c0.diameter) / 3] * 3)
     c3.set_position([0, 0.015, 0])
     c3.set_rotation([0, math.pi / 2, math.pi / 2])
@@ -57,8 +57,8 @@ def main():
     g.EventCard_objects.append(c3)
 
     c1f = Image(g.guiManager, "./resources/images/EventAdd100.png", relative_rect=Rect(-300, -300, 300, 300))
-    c2f = Image(g.guiManager, "./resources/images/EventMinus2x.png", relative_rect=Rect(-300, -300, 300, 300))
-    c3f = Image(g.guiManager, "./resources/images/EventPlus2x.png", relative_rect=Rect(-300, -300, 300, 300))
+    c2f = Image(g.guiManager, "./resources/images/EventPlus2x.png", relative_rect=Rect(-300, -300, 300, 300))
+    c3f = Image(g.guiManager, "./resources/images/EventMinus2x.png", relative_rect=Rect(-300, -300, 300, 300))
     g.EventCard_iamges = [c1f, c2f, c3f]
 
     # player1 ownership flag objects
