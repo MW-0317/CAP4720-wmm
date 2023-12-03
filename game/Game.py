@@ -369,19 +369,13 @@ class Game(Engine):
         if self.p.dice_roll == -1: return
         card = self.EventCard_objects[eventnumber]
 
-        image = self.EventCard_iamges[eventnumber]
-        anim = GuiAnimation(image)
-        start = Keyframe(pg.Vector2([0, 0]), 100)
-        end = Keyframe(pg.Vector2([self.width, self.height]), 0)
-        anim.positions = [start, end]
-        self.animations.append(anim)
 
         # Attach someObject to the animation
         anim = Animation(card)
 
         # Create Keyframes to raise card from deck
-        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 30)
-        middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 300)
+        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 150)
+        middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 0)
         end1 = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
 
         # Append keyframes to animation
@@ -391,6 +385,14 @@ class Game(Engine):
 
         # Add to game animations queue
         self.animations.append(anim)  # Assumes we are located in the Game class
+
+        image = self.EventCard_iamges[eventnumber]
+        anim = GuiAnimation(image)
+        start = Keyframe(pg.Vector2([self.width / 5, self.height/ 5]), 120)
+        middle = Keyframe(pg.Vector2([self.width / 5, self.height / 5]), 0)
+        end = Keyframe(pg.Vector2([-1000, -1000]), 0)
+        anim.positions = [start, middle, end]
+        self.animations.append(anim)
 
     #GUI Call for JAIL
     def GUIpayjail(self):
