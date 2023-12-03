@@ -61,12 +61,6 @@ class Animation:
         valueTo     = keyframes[1].value
         valueFrom   = keyframes[0].value
 
-<<<<<<< HEAD
-=======
-        #print(valueTo)
-        #print(valueFrom)
-
->>>>>>> chad
         #partial = valueFrom + (valueTo - valueFrom) * ((maxtime - starttime) / (time-starttime))
         partial = ((self.total_ticks - last_tick) / length) * (valueTo) + (1 - (self.total_ticks - last_tick) / length) * (valueFrom)
         #print(partial)
