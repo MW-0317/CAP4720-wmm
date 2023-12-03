@@ -584,7 +584,7 @@ class Game(Engine):
             #add some error message to end user?
             return
 
-        HouseNumber = int(action[-1]) - 1
+        HouseNumber = int(action[-1])
         actionLoc = action[:-1]
 
         house = None
