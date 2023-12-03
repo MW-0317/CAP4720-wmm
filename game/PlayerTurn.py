@@ -44,14 +44,17 @@ class PlayerTurn:
         if player_list[0] < prop_price:
             self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
             return
-
+        
+        image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", 300, 300)
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
+            image.kill()
             self.player_action = GuiAction.BUY
             self.should_update_logic = True
 
         self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
                                                         300, 300, callback=wantsToBuy)
+        
         
     def prompt_jail(self, gamestate: Gamestate, player_index: int):
         player_list = gamestate.current_player_list(player_index)
@@ -76,8 +79,7 @@ class PlayerTurn:
             self.dice_roll = self.dice[0] + self.dice[1]
             print("LastLoc:", gamestate.current_player_list(self.engine.current_player)[1])
             current_loc = (gamestate.current_player_list(self.engine.current_player)[1] + self.dice_roll) % 8
-            if self.dice[0] != self.dice[1] or current_loc == 6:
-                self.engine.roll_button.hide()
+            self.engine.roll_button.hide()
 
         self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)
 

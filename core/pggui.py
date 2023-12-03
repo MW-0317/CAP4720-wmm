@@ -66,7 +66,10 @@ class ElementHolder:
 
     def create_text(self, *args, **kwargs):
         return self.create_element(*args, **kwargs, classType=Text)
-
+    
+    def create_image(self, filename, *args, **kwargs):
+        return self.create_element(filename, *args, **kwargs, classType=Image)
+    
 class Window (UIElement, pggui.elements.UIWindow, ElementHolder):
     def __init__(self, manager, *args, **kwargs):
         UIElement.__init__(self, manager)
@@ -81,6 +84,12 @@ class Label (UIElement, pggui.elements.UILabel):
     def __init__(self, manager, *args, **kwargs):
         UIElement.__init__(self, manager)
         pggui.elements.UILabel.__init__(self, *args, **kwargs)
+
+class Image (UIElement, pggui.elements.UIImage):
+    def __init__(self, manager, filename, *args, **kwargs):
+        surface = pg.image.load(filename)
+        UIElement.__init__(self, manager)
+        pggui.elements.UIImage.__init__(self, image_surface=surface, *args, **kwargs)
 
 class UpdateLabel (UIElement, pggui.elements.UILabel):
     def __init__(self, manager, *args, **kwargs):
@@ -127,7 +136,7 @@ class guiManager(pggui.UIManager, ElementHolder):
     
     def query_window(self, text, width, height):
         self.window_active = True
-        window_rect = pg.Rect(self.width // 2 - width // 2, self.height // 2 - height // 2, width, height)
+        window_rect = pg.Rect(self.width // 2 - width // 2 + self.width // 5, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
 
         width = width - 30
@@ -139,6 +148,17 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.ui_queue.append(window)
 
         return window, width, height
+    
+    def query_image(self, filename, width, height):
+        image_rect = pg.Rect(self.width // 2 - width // 2 - self.width // 5, self.height // 2 - height // 2, width, height)
+        image = self.create_image(filename, relative_rect=image_rect)
+
+        width = width - 30
+        height = height - 30
+
+        self.ui_queue.append(image)
+
+        return image, width, height
     
     def query_option(self, text, width, height, first_option="One", second_option="Two", callback: Callable = lambda ui: None):
         ...

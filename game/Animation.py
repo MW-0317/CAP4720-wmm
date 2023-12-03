@@ -3,6 +3,7 @@ from typing import Callable
 
 from core.Object import Object
 from core.Interval import Tick
+from core.pggui import UIElement
 import pyrr
 
 class Keyframe:
@@ -60,9 +61,6 @@ class Animation:
         valueTo     = keyframes[1].value
         valueFrom   = keyframes[0].value
 
-        print(valueTo)
-        print(valueFrom)
-
         #partial = valueFrom + (valueTo - valueFrom) * ((maxtime - starttime) / (time-starttime))
         partial = ((self.total_ticks - last_tick) / length) * (valueTo) + (1 - (self.total_ticks - last_tick) / length) * (valueFrom)
         #print(partial)
@@ -76,4 +74,22 @@ class Animation:
         self.animate(tick, self.positions, self.last_position_tick, self.anim_object.set_position)
         self.animate(tick, self.scales, self.last_scale_tick, self.anim_object.set_scale)
         self.animate(tick, self.rotations, self.last_rotation_tick, self.anim_object.set_rotation)
+        self.total_ticks += 1
+
+class GuiAnimation(Animation):
+    def __init__(self, ui: UIElement):
+        self.ui = ui
+        self.total_tick = 0
+
+        self.positions: list[Keyframe]  = []
+        self.last_position_tick         = 0
+        # self.scales:    list[Keyframe]  = []
+        # self.last_scale_tick            = 0
+        # self.rotations: list[Keyframe]  = []
+        # self.last_rotation_tick         = 0
+
+    def tick_update(self, tick: Tick):
+        self.animate(tick, self.positions, self.last_position_tick, self.ui.set_position)
+        # self.animate(tick, self.scales, self.last_scale_tick, self.ui.set_scale)
+        # self.animate(tick, self.rotations, self.last_rotation_tick, self.ui.set_rotation)
         self.total_ticks += 1
