@@ -54,13 +54,13 @@ class Gamestate:
         properties = []
         property_names = [key for key in self.property_prices]
         if self.AirZandZRental[0] == current_player:
-            properties.append(property_names[0])
+            properties.append((property_names[0], self.AirZandZRental))
         if self.SuburbanTownHouse[0] == current_player:
-            properties.append(property_names[1])
+            properties.append((property_names[1], self.SuburbanTownHouse))
         if self.DownTownStudioApt[0] == current_player:
-            properties.append(property_names[2])
+            properties.append((property_names[2], self.DownTownStudioApt))
         if self.SkyRiseFlat[0] == current_player:
-            properties.append(property_names[3])
+            properties.append((property_names[3], self.SkyRiseFlat))
         return properties
 
     def getgamestatecon(self):

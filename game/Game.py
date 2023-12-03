@@ -220,14 +220,40 @@ class Game(Engine):
         def mortgage(ui):
             current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
             current_option = current_option.group(1)
-            self.g.mortgage(current_option)
+            self.g.mortgageProperity(current_option, self.current_player)
+            if self.guiManager.current_select != None:
+                self.guiManager.current_select.kill()
+                self.guiManager.window_active = False
+                self.guiManager.current_select = None
+                filenames = []
+                empty = True
+                props = self.g.get_player_properties(self.current_player)
+                for prop in props:
+                    empty = False
+                    side = "Back" if prop[1][2] == 1 else "Front"
+                    filenames.append(f"./resources/images/{prop[0]}{side}.png")
+                if empty: return
+                self.guiManager.query_image_select(filenames, 300, 300)
         self.mortgage_button = self.guiManager.create_button(relative_rect=mortage_rect, text="Mortgage", callback=mortgage)
         self.mortgage_button.hide()
         unmortage_rect = add_box(1/2)
         def unmortgage(ui):
             current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
             current_option = current_option.group(1)
-            self.g.unmortgage(current_option)
+            self.g.unmortgageProperity(current_option, self.current_player)
+            if self.guiManager.current_select != None:
+                self.guiManager.current_select.kill()
+                self.guiManager.window_active = False
+                self.guiManager.current_select = None
+                filenames = []
+                empty = True
+                props = self.g.get_player_properties(self.current_player)
+                for prop in props:
+                    empty = False
+                    side = "Back" if prop[1][2] == 1 else "Front"
+                    filenames.append(f"./resources/images/{prop[0]}{side}.png")
+                if empty: return
+                self.guiManager.query_image_select(filenames, 300, 300)
         self.unmortgage_button = self.guiManager.create_button(relative_rect=unmortage_rect, text="Unmortgage", callback=unmortgage)
         self.unmortgage_button.hide()
 
@@ -248,9 +274,9 @@ class Game(Engine):
                 empty = True
                 for prop in props:
                     empty = False
-                    filenames.append(f"./resources/images/{prop}Front.png")
-                if empty:
-                    return
+                    side = "Back" if prop[1][2] == 1 else "Front"
+                    filenames.append(f"./resources/images/{prop[0]}{side}.png")
+                if empty: return
                 self.guiManager.query_image_select(filenames, 300, 300)
 
         self.properties_button = self.guiManager.create_button(relative_rect=properties_rect, text="Properties", callback=toggle_prop_buttons)
@@ -300,7 +326,7 @@ class Game(Engine):
             if(endingAction == "Next Players Turn"):
                 self.playerturn()
             else:
-                self.guiManager.query_message(endingAction, 300, 300, "LET'S GO!")
+                self.guiManager.query_message(endingAction, 300, 300, "YAY!")
         
         if not self.p.should_update_logic and self.p.dice_roll == -1: return
 
