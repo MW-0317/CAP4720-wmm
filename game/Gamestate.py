@@ -191,6 +191,9 @@ class Gamestate:
     #this method returns the name of the event and proccess the event
     def getevent(self, currentplayer: int):
 
+        if(self.event >= 2):
+            self.event = 0
+
         if(self.event == 0):
             if (currentplayer == 1):
                 self.player1[0] = self.player1[0] - 100
