@@ -54,6 +54,66 @@ def main():
     s.add_object(c3)
     g.EventCard_objects.append(c3)
 
+
+
+    # player1 ownership flag objects
+    f0 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player1Flag.png")
+    f0.set_scale([(2 / f0.diameter) / 3] * 3)
+    f0.set_position([0, 0.01, 0])
+    f0.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f0)
+    g.Player1_flag_objects.append(f0)
+
+    f1 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player1Flag.png")
+    f1.set_scale([(2 / f1.diameter) / 3] * 3)
+    f1.set_position([0, 0.01, 0])
+    f1.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f1)
+    g.Player1_flag_objects.append(f1)
+
+    f2 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player1Flag.png")
+    f2.set_scale([(2 / f2.diameter) / 3] * 3)
+    f2.set_position([0, 0.01, 0])
+    f2.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f2)
+    g.Player1_flag_objects.append(f2)
+
+    f3 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player1Flag.png")
+    f3.set_scale([(2 / f3.diameter) / 3] * 3)
+    f3.set_position([0, 0.01, 0])
+    f3.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f3)
+    g.Player1_flag_objects.append(f3)
+
+    # player2 ownership flag objects
+    f4 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player2Flag.png")
+    f4.set_scale([(2 / f4.diameter) / 3] * 3)
+    f4.set_position([0, 0.01, 0])
+    f4.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f4)
+    g.Player2_flag_objects.append(f4)
+
+    f5 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player2Flag.png")
+    f5.set_scale([(2 / f5.diameter) / 3] * 3)
+    f5.set_position([0, 0.01, 0])
+    f5.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f5)
+    g.Player2_flag_objects.append(f5)
+
+    f6 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player2Flag.png")
+    f6.set_scale([(2 / f6.diameter) / 3] * 3)
+    f6.set_position([0, 0.01, 0])
+    f6.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f6)
+    g.Player2_flag_objects.append(f6)
+
+    f7 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player2Flag.png")
+    f7.set_scale([(2 / f7.diameter) / 3] * 3)
+    f7.set_position([0, 0.01, 0])
+    f7.set_rotation([0, math.pi / 2, math.pi / 2])
+    s.add_object(f7)
+    g.Player2_flag_objects.append(f7)
+
     # Houses for Light Blue
     h1 = Object.create_silver_object("resources/objects/house.obj")
     h1.set_scale([(2 / h1.diameter) / 15] * 3)

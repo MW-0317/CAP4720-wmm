@@ -51,6 +51,8 @@ class Game(Engine):
         self.YellowHouse_objects = []
         self.DarkBlueHouse_objects = []
         self.EventCard_objects = []
+        self.Player1_flag_objects = []
+        self.Player2_flag_objects = []
 
         self.animations: list[Animation] = []
 
@@ -252,7 +254,14 @@ class Game(Engine):
         elif (self.action == "OfferToBuyAirZandZRental"):
             self.PlacePlayer("AirZandZRental")
             if self.wantsToBuy():
-                self.g.BuyAirZandZRental(self.current_player)       
+                self.g.BuyAirZandZRental(self.current_player)
+                if (self.current_player == 1):
+                    updateflag = self.Player1_flag_objects[0]
+                    updateflag.set_position([0.0, 0.01, 0.65])
+
+                elif (self.current_player == 2):
+                    updateflag = self.Player2_flag_objects[0]
+                    updateflag.set_position([0.0, 0.01, 0.65])
 
         elif (self.action == "MoveToAirZandZRental"):
             self.PlacePlayer("AirZandZRental")
@@ -264,6 +273,13 @@ class Game(Engine):
             self.PlacePlayer("SuburbanTownHouse")
             if self.wantsToBuy():
                 self.g.BuySuburbanTownHouse(self.current_player)
+                if (self.current_player == 1):
+                    updateflag = self.Player1_flag_objects[1]
+                    updateflag.set_position([-0.65, 0.01, 0.0])
+
+                elif (self.current_player == 2):
+                    updateflag = self.Player2_flag_objects[1]
+                    updateflag.set_position([-0.65, 0.01, 0.0])
 
 
         elif (self.action == "MoveToSuburbanTownHouse"):
@@ -273,6 +289,13 @@ class Game(Engine):
             self.PlacePlayer("DownTownStudioApt")
             if self.wantsToBuy():
                 self.g.BuyDownTownStudioApt(self.current_player)
+                if(self.current_player == 1):
+                    updateflag = self.Player1_flag_objects[2]
+                    updateflag.set_position([0.0, 0.01, -0.65])
+
+                elif(self.current_player == 2):
+                    updateflag = self.Player2_flag_objects[2]
+                    updateflag.set_position([0.0, 0.01, -0.65])
 
 
         elif (self.action == "MoveToDownTownStudioApt"):
@@ -287,6 +310,13 @@ class Game(Engine):
             self.PlacePlayer("SkyRiseFlat")
             if self.wantsToBuy():
                 self.g.BuySkyRiseFlat(self.current_player)
+                if (self.current_player == 1):
+                    updateflag = self.Player1_flag_objects[3]
+                    updateflag.set_position([0.65, 0.01, 0.0])
+
+                elif (self.current_player == 2):
+                    updateflag = self.Player2_flag_objects[3]
+                    updateflag.set_position([0.65, 0.01, 0.0])
 
         elif (self.action == "MoveToSkyRiseFlat"):
             self.PlacePlayer("SkyRiseFlat")
@@ -337,9 +367,6 @@ class Game(Engine):
     #place card in front of camera for a time
     def displayCard(self, eventnumber: int):
 
-        start = 0
-        end = 60
-
         card = self.EventCard_objects[eventnumber]
 
         # Attach someObject to the animation
@@ -347,29 +374,16 @@ class Game(Engine):
 
         # Create Keyframes to raise card from deck
         start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 30)
-        middle = Keyframe(pyrr.Vector3([0, 0.6, 0]), 45)
-
-        # Create Keyframes to make the card rotate to face the camera
-        rotate = Keyframe(pyrr.Vector3([0, math.pi / 2, math.pi / 2]), 5)
-        rotateEnd = Keyframe(pyrr.Vector3([math.pi, math.pi / 2, math.pi / 2]), 0)
-
-        # Create Keyframes to hold the card in front of the camera for 120 ticks
-        hold = Keyframe(pyrr.Vector3([0.3, 0.6, 0.3]), 120) #need to update with camera pos!!!
-        end = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
-        # Must be pyrr.Vector3 or else it won't do arithmetic properly in Animation
-        # Last keyframe *must* be zero ticks long
+        middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 300)
+        end1 = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
 
         # Append keyframes to animation
         anim.positions.append(start)  # Can also be animation.scales or animation.rotations
         anim.positions.append(middle)
-        anim.rotations.append(rotate)
-        anim.rotations.append(rotateEnd)
-        anim.positions.append(hold)
-        anim.positions.append(end)
+        anim.positions.append(end1)
 
         # Add to game animations queue
         self.animations.append(anim)  # Assumes we are located in the Game class
-
 
     #GUI Call for JAIL
     def GUIpayjail(self):
