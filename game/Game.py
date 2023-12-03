@@ -567,7 +567,11 @@ class Game(Engine):
         current = current % 8
         while (i < moves):
             anim = Animation(self.player_objects[player])
-            anim.translation(self.positions[current], self.positions[(current + 1) % 8], 30)
+            fromTranslation = pyrr.Vector3(self.positions[current]) * (0.2 * self.current_player + 0.6)
+            fromTranslation.y = self.positions[current][1]
+            toTranslation = pyrr.Vector3(self.positions[(current + 1) % 8]) * (0.2 * self.current_player + 0.6)
+            toTranslation.y = self.positions[(current + 1) % 8][1]
+            anim.translation(fromTranslation, toTranslation, 30)
             anim.rotation(pyrr.Vector3(self.rotations(current // 2)) + pyrr.Vector3(self.rotation_offsets[player]),
                            pyrr.Vector3(self.rotations((current + 1) // 2)) + pyrr.Vector3(self.rotation_offsets[player]), 30)
             self.animations.append(anim)
