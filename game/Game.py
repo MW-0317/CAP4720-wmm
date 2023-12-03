@@ -202,14 +202,18 @@ class Game(Engine):
         def buy_house(ui):
             current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
             current_option = current_option.group(1)
-            self.g.buyHouse(current_option, self.current_player)
+            self.ProcessBuildHouse(current_option)
+            #build = self.g.buyHouse(current_option, self.current_player).startswith("Build")
+            
         self.buy_house_button = self.guiManager.create_button(relative_rect=buy_house_rect, text="Buy House", callback=buy_house)
         self.buy_house_button.hide()
         sell_house_rect = add_box(1/2)
         def sell_house(ui):
             current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
             current_option = current_option.group(1)
-            self.g.sellHouse(current_option, self.current_player)
+            self.ProcessSellHouse(current_option)
+            #self.g.sellHouse(current_option, self.current_player)
+
         self.sell_house_button = self.guiManager.create_button(relative_rect=sell_house_rect, text="Sell House", callback=sell_house)
         self.sell_house_button.hide()
         mortage_rect = add_box(1/2)
@@ -553,24 +557,23 @@ class Game(Engine):
             # add some error message to end user?
             return
 
-        HouseNumber = action[-1:-1]-1
+        HouseNumber = int(action[-1])-1
         actionLoc = action[:-1]
 
+        house = None
         if (actionLoc == "BuildHouseOnAirZandZRental"):
             house = self.LightBlueHouse_objects[HouseNumber]
-            house.set_position.y(0.06)
 
         if (actionLoc == "BuildHouseOnSuburbanTownHouse"):
             house = self.OrangeHouse_objects[HouseNumber]
-            house.set_position.y(0.06)
 
         if (actionLoc == "BuildHouseOnDownTownStudioApt"):
             house = self.YellowHouse_objects[HouseNumber]
-            house.set_position.y(0.06)
 
         if (actionLoc == "BuildHouseOnSkyRiseFlat"):
             house = self.DarkBlueHouse_objects[HouseNumber]
-            house.set_position.y(0.06)
+        if house:
+            house.position[1] = 0.06
 
 
     # GUI Call for house animation Processing for selling a house, just moves the house bellow the board
@@ -581,18 +584,17 @@ class Game(Engine):
             #add some error message to end user?
             return
 
-        HouseNumber = action[-1:-1]-1
+        HouseNumber = int(action[-1]) - 1
         actionLoc = action[:-1]
 
+        house = None
         if (actionLoc == "RemoveHouseOnAirZandZRental"):
             house = self.LightBlueHouse_objects[HouseNumber]
-            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnSuburbanTownHouse"):
             house = self.OrangeHouse_objects[HouseNumber]
-            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnDownTownStudioApt"):
             house = self.YellowHouse_objects[HouseNumber]
-            house.set_position.y(-0.1)
         if (actionLoc == "RemoveHouseOnSkyRiseFlat"):
             house = self.DarkBlueHouse_objects[HouseNumber]
-            house.set_position.y(-0.1)
+        if house:
+            house.position[1] = -0.1
