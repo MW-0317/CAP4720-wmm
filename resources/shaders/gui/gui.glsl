@@ -27,6 +27,9 @@ out vec4 outColor;
 void main()
 {
     vec4 texColor = texture(GUITexture, fTexCoord);
+    float temp = texColor.r;
+    texColor.r = texColor.b;
+    texColor.b = temp;
     outColor = texColor;
 }
 #endif

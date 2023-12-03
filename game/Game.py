@@ -232,12 +232,12 @@ class Game(Engine):
         self.unmortgage_button.hide()
 
         def toggle_prop_buttons(ui):
+            props = self.g.get_player_properties(self.current_player)
+            if props == []: return
             self.buy_house_button.toggle_visibility()
             self.sell_house_button.toggle_visibility()
             self.mortgage_button.toggle_visibility()
             self.unmortgage_button.toggle_visibility()
-            props = self.g.get_player_properties(self.current_player)
-            print(self.guiManager.current_select)
             
             if self.guiManager.current_select != None:
                 self.guiManager.current_select.kill()

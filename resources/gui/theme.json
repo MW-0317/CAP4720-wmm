@@ -18,7 +18,7 @@
     {
         "colours":
         {
-            "hovered_bg": "#f79017",
+            "hovered_bg": "#1790f7",
             "normal_text": "#000000",
             "hovered_text": "#FFFFFF"
         },
@@ -38,15 +38,15 @@
     {
         "colours":
         {
-            "normal_bg": "#3517F7"
+            "normal_bg": "#F71735"
         }
     },
     "label":
     {
         "colours":
          {
-            "dark_bg": "#654624",
-            "normal_border": "#654624",
+            "dark_bg": "#244665",
+            "normal_border": "#244665",
             "text_shadow": "#505050"
          },
          "font":
@@ -70,7 +70,7 @@
     {
         "colours":
         {
-            "dark_bg": "#654624",
+            "dark_bg": "#244665",
             "normal_border": "#000000"
         },
         "font":
@@ -89,7 +89,7 @@
     {
         "colours":
         {
-            "dark_bg": "#654624",
+            "dark_bg": "#244665",
             "normal_border": "#000000"
         },
         "misc":
