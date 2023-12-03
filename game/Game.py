@@ -10,7 +10,7 @@ from game.Gamestate import Gamestate
 from game.Animation import *
 
 import math
-import pyrr
+import pyrr, re
 import pygame as pg
 from pygame_gui.core import ObjectID
 
@@ -109,7 +109,7 @@ class Game(Engine):
             self.update_label_2.update_value(str(self.g.player2[0] - self.last_money[1]))
             self.last_money[0] = self.g.player1[0]
             self.last_money[1] = self.g.player2[0]
-        self.current_player_label.set_text("C: " + str(self.current_player))
+        self.current_player_label.set_text("Player " + str(self.current_player))
         super().frame_update(frame)
 
     def run(self):
@@ -169,7 +169,7 @@ class Game(Engine):
         self.update_label_2 = self.guiManager.create_update_label(relative_rect=update_rect, text="", object_id=ObjectID(class_id="@update_label", object_id=""))
 
         current_player_rect = add_box(1/2)
-        self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="1")
+        self.current_player_label = self.guiManager.create_label(relative_rect=current_player_rect, text="Player 1")
 
         roll_button_rect = add_box(1/2)
         def roll_dice(ui):
@@ -185,6 +185,61 @@ class Game(Engine):
             if self.guiManager.window_active and not self.animations == []: return
             self.p.end_turn()
         self.end_turn_button = self.guiManager.create_button(relative_rect=end_turn_rect, text="End Turn", callback=lambda ui: end_turn(ui))
+
+        properties_rect = add_box(1/2)
+        
+        buy_house_rect = add_box(1/2)
+        def buy_house(ui):
+            current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
+            current_option = current_option.group(1)
+            self.g.buyHouse(current_option, self.current_player)
+        self.buy_house_button = self.guiManager.create_button(relative_rect=buy_house_rect, text="Buy House", callback=buy_house)
+        self.buy_house_button.hide()
+        sell_house_rect = add_box(1/2)
+        def sell_house(ui):
+            current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
+            current_option = current_option.group(1)
+            self.g.sellHouse(current_option, self.current_player)
+        self.sell_house_button = self.guiManager.create_button(relative_rect=sell_house_rect, text="Sell House", callback=sell_house)
+        self.sell_house_button.hide()
+        mortage_rect = add_box(1/2)
+        def mortgage(ui):
+            current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
+            current_option = current_option.group(1)
+            self.g.mortgage(current_option)
+        self.mortgage_button = self.guiManager.create_button(relative_rect=mortage_rect, text="Mortgage", callback=mortgage)
+        self.mortgage_button.hide()
+        unmortage_rect = add_box(1/2)
+        def unmortgage(ui):
+            current_option = re.search(r"\.\/resources\/images\/(\w+)(Front|Back)\.png", self.guiManager.current_option)
+            current_option = current_option.group(1)
+            self.g.unmortgage(current_option)
+        self.unmortgage_button = self.guiManager.create_button(relative_rect=unmortage_rect, text="Unmortgage", callback=unmortgage)
+        self.unmortgage_button.hide()
+
+        def toggle_prop_buttons(ui):
+            self.buy_house_button.toggle_visibility()
+            self.sell_house_button.toggle_visibility()
+            self.mortgage_button.toggle_visibility()
+            self.unmortgage_button.toggle_visibility()
+            props = self.g.get_player_properties(self.current_player)
+            print(self.guiManager.current_select)
+            
+            if self.guiManager.current_select != None:
+                self.guiManager.current_select.kill()
+                self.guiManager.window_active = False
+                self.guiManager.current_select = None
+            else:
+                filenames = []
+                empty = True
+                for prop in props:
+                    empty = False
+                    filenames.append(f"./resources/images/{prop}Front.png")
+                if empty:
+                    return
+                self.guiManager.query_image_select(filenames, 300, 300)
+
+        self.properties_button = self.guiManager.create_button(relative_rect=properties_rect, text="Properties", callback=toggle_prop_buttons)
 
         rules_height = self.ui_height * self.height_fraction * 1 / 4
         rules_rect = pg.Rect(self.width - self.ui_width, self.height - rules_height, self.ui_width, rules_height)

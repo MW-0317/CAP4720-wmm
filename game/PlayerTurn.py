@@ -46,7 +46,7 @@ class PlayerTurn:
             self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
             return
         
-        image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", 300, 300)
+        image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", 300, 300, offset=self.engine.guiManager.width // 5)
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
             image.kill()
@@ -65,7 +65,7 @@ class PlayerTurn:
         if player_list[3] <= 0:
             return
         
-        def wantsToPay(ui, pay):
+        def wantsToPay(pay):
             if pay:
                 self.should_update_logic = True
                 self.player_action = GuiAction.LEAVE_JAIL
@@ -86,6 +86,9 @@ class PlayerTurn:
             self.engine.roll_button.hide()
 
         self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)
+
+    def buy_house(self, gamestate: Gamestate):
+        ...
 
     def tick(self, gamestate: Gamestate, player_index: int):
         ...

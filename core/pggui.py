@@ -123,6 +123,8 @@ class guiManager(pggui.UIManager, ElementHolder):
         pggui.UIManager.__init__(self, (width, height), theme_path="./resources/gui/theme.json")
         self._load_fonts()
 
+        self.current_select: UIElement = None
+
     def _load_fonts(self):
         fonts = [{'name': 'fira_code', 'point_size': 18, 'style': 'regular'}]
         self.preload_fonts(fonts)
@@ -134,7 +136,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         window = Window(self.manager, *args, **kwargs)
         return window
     
-    def query_window(self, text, width, height, offset=0):
+    def query_window(self, text, width, height, offset=0, *args, **kwargs):
         self.window_active = True
         window_rect = pg.Rect(self.width // 2 - width // 2 + offset, self.height // 2 - height // 2, width, height)
         window = self.create_window(rect=window_rect)
@@ -149,8 +151,8 @@ class guiManager(pggui.UIManager, ElementHolder):
 
         return window, width, height
     
-    def query_image(self, filename, width, height):
-        image_rect = pg.Rect(self.width // 2 - width // 2 - self.width // 5, self.height // 2 - height // 2, width, height)
+    def query_image(self, filename, width, height, offset=0, *args, **kwargs):
+        image_rect = pg.Rect(self.width // 2 - width // 2 - offset, self.height // 2 - height // 2, width, height)
         image = self.create_image(filename, relative_rect=image_rect)
 
         width = width - 30
@@ -159,6 +161,17 @@ class guiManager(pggui.UIManager, ElementHolder):
         self.ui_queue.append(image)
 
         return image, width, height
+    
+    def query_image_select(self, filenames, width, height, *args, i = 0, **kwargs):
+        def next(isright):
+            if isright: 
+                self.query_image_select(filenames, width, height, *args, i=(i+1) % len(filenames), **kwargs)
+            else:
+                self.query_image_select(filenames, width, height, *args, i=(i-1) % len(filenames), **kwargs)
+        window, wWidth, wHeight = self.query_confirmation("", width * 1.2, height * 1.8, confirm_text="Right", decline_text="Left", callback=next)
+        window.create_image(filenames[i], relative_rect=pg.Rect(wWidth // 2 - width // 2, wHeight // 2 - height // 1.5, width, height))
+        self.current_select = window
+        self.current_option = filenames[i]
     
     def query_option(self, text, width, height, first_option="One", second_option="Two", callback: Callable = lambda ui: None):
         ...
@@ -180,6 +193,7 @@ class guiManager(pggui.UIManager, ElementHolder):
         decline_size = (width // 2.7, height // 8)
         decline_rect = pg.Rect(width // 15, height - confirm_size[1] - height // 15, confirm_size[0], confirm_size[1])
         window.create_button(decline_rect, text=decline_text, anchor="left", callback=lambda ui_element: close_window_and_callback(ui_element, False), object_id=decline_id)
+        return window, width, height
     
     def query_message(self, text, width, height, okay_text="Okay", callback: Callable = lambda ui: None):
         window, width, height = self.query_window(text, width, height)

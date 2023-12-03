@@ -49,6 +49,19 @@ class Gamestate:
         if current_player > 2: 
             return []
         return self.player1 if current_player == 1 else self.player2
+    
+    def get_player_properties(self, current_player):
+        properties = []
+        property_names = [key for key in self.property_prices]
+        if self.AirZandZRental[0] == current_player:
+            properties.append(property_names[0])
+        if self.SuburbanTownHouse[0] == current_player:
+            properties.append(property_names[1])
+        if self.DownTownStudioApt[0] == current_player:
+            properties.append(property_names[2])
+        if self.SkyRiseFlat[0] == current_player:
+            properties.append(property_names[3])
+        return properties
 
     def getgamestatecon(self):
         return self.gamestatecon
@@ -410,8 +423,6 @@ class Gamestate:
 
     #logic to buy houses on properitys owned by the player, returns a string for animation action call
     def buyHouse(self, properity: str, currentplayer: int):
-
-
         if ((properity == 'AirZandZRental') and (self.AirZandZRental[0] == currentplayer) and (self.AirZandZRental[2] == 0) and (self.AirZandZRental[1] < 5)):
             houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -50)
