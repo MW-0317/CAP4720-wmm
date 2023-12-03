@@ -3,10 +3,12 @@ from core.Scene import Scene
 from core.Object import Object, Texture
 from core.Camera import Camera
 from core.shaderLoader import ShaderProgram
+from core.pggui import Image
 
 from game.Game import Game
 
 import math
+from pygame import Rect
 
 # Texture loading
 def load_object_with_texture(object_file, texture_file) -> Object:
@@ -54,7 +56,10 @@ def main():
     s.add_object(c3)
     g.EventCard_objects.append(c3)
 
-
+    c1f = Image(g.guiManager, "./resources/images/EventAdd100.png", relative_rect=Rect(-300, -300, 300, 300))
+    c2f = Image(g.guiManager, "./resources/images/EventMinus2x.png", relative_rect=Rect(-300, -300, 300, 300))
+    c3f = Image(g.guiManager, "./resources/images/EventPlus2x.png", relative_rect=Rect(-300, -300, 300, 300))
+    g.EventCard_iamges = [c1f, c2f, c3f]
 
     # player1 ownership flag objects
     f0 = load_object_with_texture("resources/objects/square.obj", "./resources/images/Player1Flag.png")

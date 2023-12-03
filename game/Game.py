@@ -3,7 +3,7 @@ from core.Interval import Frame, Tick
 from core.Scene import Scene
 from core.Object import Object
 from core.Camera import Camera
-from core.pggui import Frame
+from core.pggui import Image
 from core.shaderLoader import ShaderProgram
 from game.PlayerTurn import PlayerTurn, GuiAction
 from game.Gamestate import Gamestate
@@ -51,6 +51,7 @@ class Game(Engine):
         self.YellowHouse_objects = []
         self.DarkBlueHouse_objects = []
         self.EventCard_objects = []
+        self.EventCard_iamges = []
         self.Player1_flag_objects = []
         self.Player2_flag_objects = []
 
@@ -236,11 +237,8 @@ class Game(Engine):
 
         if self.p.dice_roll != -1:
             self.action = self.g.gamelocation(self.p.dice_roll, self.current_player)
-        elif self.p.player_action != GuiAction.BUY:
+        elif self.p.player_action != GuiAction.BUY and self.p.player_action != GuiAction.DONT_BUY:
             self.p.buy(self.g, self.current_player, self.action)
-        print("Player Action:", self.p.player_action)
-        print(self.action)
-        print(self.p.should_update_logic)
 
         if(self.action == "OfferToPayToLeaveJail"):
             print(self.GUIpayjail())
@@ -368,8 +366,15 @@ class Game(Engine):
 
     #place card in front of camera for a time
     def displayCard(self, eventnumber: int):
-
+        if self.p.dice_roll == -1: return
         card = self.EventCard_objects[eventnumber]
+
+        image = self.EventCard_iamges[eventnumber]
+        anim = GuiAnimation(image)
+        start = Keyframe(pg.Vector2([0, 0]), 100)
+        end = Keyframe(pg.Vector2([self.width, self.height]), 0)
+        anim.positions = [start, end]
+        self.animations.append(anim)
 
         # Attach someObject to the animation
         anim = Animation(card)

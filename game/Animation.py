@@ -1,14 +1,15 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, Union
 
 from core.Object import Object
 from core.Interval import Tick
 from core.pggui import UIElement
 import pyrr
+from pygame import Vector2
 
 class Keyframe:
     # Length in ticks
-    def __init__(self, value: pyrr.Vector3, length):
+    def __init__(self, value: Union[pyrr.Vector3, Vector2], length):
         self.value = value
         self.length = length
 
@@ -79,7 +80,7 @@ class Animation:
 class GuiAnimation(Animation):
     def __init__(self, ui: UIElement):
         self.ui = ui
-        self.total_tick = 0
+        self.total_ticks = 0
 
         self.positions: list[Keyframe]  = []
         self.last_position_tick         = 0
@@ -87,6 +88,9 @@ class GuiAnimation(Animation):
         # self.last_scale_tick            = 0
         # self.rotations: list[Keyframe]  = []
         # self.last_rotation_tick         = 0
+
+    def is_empty(self):
+        return self.positions == []
 
     def tick_update(self, tick: Tick):
         self.animate(tick, self.positions, self.last_position_tick, self.ui.set_position)

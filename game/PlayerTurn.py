@@ -14,10 +14,11 @@ class GuiAction:
     NONE        = 0
     ROLL        = 1
     BUY         = 2
-    MORTGAGE    = 3
-    BANKRUPT    = 4
-    LEAVE_JAIL  = 5
-    END         = 6
+    DONT_BUY    = 3
+    MORTGAGE    = 4
+    BANKRUPT    = 5
+    LEAVE_JAIL  = 6
+    END         = 7
 
 class PlayerTurn:
     def __init__(self, engine: Game):
@@ -49,7 +50,10 @@ class PlayerTurn:
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
             image.kill()
-            self.player_action = GuiAction.BUY
+            if confirmed:
+                self.player_action = GuiAction.BUY
+            else:
+                self.player_action = GuiAction.DONT_BUY
             self.should_update_logic = True
 
         self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
@@ -61,10 +65,10 @@ class PlayerTurn:
         if player_list[3] <= 0:
             return
         
-        def wantsToPay(pay):
+        def wantsToPay(ui, pay):
             if pay:
                 self.should_update_logic = True
-                self.player_action = GuiAction.LEAVE_JAIL 
+                self.player_action = GuiAction.LEAVE_JAIL
             else:
                 self.engine.roll_button.hide()
 
