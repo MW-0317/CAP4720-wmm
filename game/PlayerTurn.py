@@ -42,9 +42,10 @@ class PlayerTurn:
 
         prop_price = gamestate.get_property_price(prop)
         location_string_fixed = Gamestate.location_spaced_string(prop)
-        if player_list[0] < prop_price:
-            self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
-            return
+
+        # if player_list[0] < prop_price:
+        #     self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
+        #     return
         
         image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", 300, 300)
         def wantsToBuy(confirmed: bool):

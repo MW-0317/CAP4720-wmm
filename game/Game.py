@@ -17,8 +17,15 @@ from pygame_gui.core import ObjectID
 from core.gui import *
 
 class Game(Engine):
-    HELP_MESSAGE = """<font size=5> Where's My Money -- Help </font>
+    HELP_MESSAGE = """<font size=5> Where's My Money -- RULES </font>
     <p> Where's my money is a simple version of the classic board game monopoly. </p>
+    <p> </p>
+    <p> 1. Players may enter the negative to buy houses and properties. </p>
+    <p> 2. Players will lose the game if they end the turn in the negative. </p>
+    <p> 3. When a player goes around the board or lands on go they receive money based on there stock value. </p>
+    <p> 4. When a player lands on Court Battle they go straight to jail and do not receive money for passing GO. </p>
+    <p> 5. When a player is sent to jail they are kept in jail for 3 turns, they may pay $50 to leave jail early on there
+     next roll or will have to pay $50 after 3 turns to leave jail.</p>
     """
     positions = [
         [ 0.5,  0.13,  0.5], # 0
@@ -100,10 +107,10 @@ class Game(Engine):
             camera.set_position((camera_pos[0], 1, camera_pos[1]))
             camera.pan = 90 * n
 
-        self.money_label_1.set_text("P1: " + str(self.g.player1[0]))
-        self.money_label_2.set_text("P2: " + str(self.g.player2[0]))
-        self.stock_label_1.set_text("Stock: " + str(self.g.player1[2]))
-        self.stock_label_2.set_text("Stock: " + str(self.g.player2[2]))
+        self.money_label_1.set_text("P1: $" + str(self.g.player1[0]))
+        self.money_label_2.set_text("P2: $" + str(self.g.player2[0]))
+        self.stock_label_1.set_text("Stock: $" + str(self.g.player1[2]))
+        self.stock_label_2.set_text("Stock: $" + str(self.g.player2[2]))
         if self.last_money[0] != self.g.player1[0] or self.last_money[1] != self.g.player2[0]:
             self.update_label_1.update_value(str(self.g.player1[0] - self.last_money[0]))
             self.update_label_2.update_value(str(self.g.player2[0] - self.last_money[1]))
@@ -116,7 +123,7 @@ class Game(Engine):
         super().run()
 
     def guiSetup(self):
-        help_rect = pg.Rect(20, 20, self.ui_width, self.ui_height * self.height_fraction * 2)
+        help_rect = pg.Rect(20, 20, self.ui_width*2.5, self.ui_height * self.height_fraction * 2)
         help = self.guiManager.create_text(self.HELP_MESSAGE, relative_rect=help_rect)
         help.hide()
 
