@@ -26,6 +26,7 @@ class Game(Engine):
     <p> 4. When a player lands on Court Battle they go straight to jail and do not receive money for passing GO. </p>
     <p> 5. When a player is sent to jail they are kept in jail for 3 turns, they may pay $50 to leave jail early on there
      next roll or will have to pay $50 after 3 turns to leave jail.</p>
+    <p> 6. When A PLAYER Lands ON Tent Street Draw An EVENT CARD.</p>
     """
     positions = [
         [ 0.5,  0.13,  0.5], # 0
