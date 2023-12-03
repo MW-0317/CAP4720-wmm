@@ -7,7 +7,7 @@ from core.pggui import Image
 
 from game.Game import Game
 
-import math
+import math, pyrr
 from pygame import Rect
 
 # Texture loading
@@ -18,8 +18,8 @@ def load_object_with_texture(object_file, texture_file) -> Object:
 
 
 def main():
-    width = 800
-    height = 600
+    width = int((1920 / 1080) * 800)
+    height = 800
     g = Game(width, height)
     s = Scene()
 
@@ -273,7 +273,8 @@ def main():
     # Cat (player 1)
     o2 = Object.create_silver_object("resources/objects/cat.obj", skybox_textures)
     o2.set_scale([(2 / o2.diameter) / 5] * 3)
-    o2.set_position([0, 0, 0])
+    o2.set_position(pyrr.Vector3([0.5, 0, 0.5]) * (0.2 * 1 + 0.7))
+    o2.position[1] = 0.13
     o2.set_rotation([math.pi / 2, 0, 0])
     s.add_object(o2)
     g.player_objects.append(o2)
@@ -281,16 +282,17 @@ def main():
     # Wolf (player 2)
     o3 = Object.create_silver_object("resources/objects/wolf.obj", skybox_textures)
     o3.set_scale([(2 / o3.diameter) / 5] * 3)
-    o3.set_position([0, 0.13, 0])
+    o3.set_position(pyrr.Vector3([0.5, 0, 0.5]) * (0.2 * 2 + 0.7))
+    o3.position[1] = 0.13
     o3.set_rotation([0, 0, 0])
     s.add_object(o3)
     g.player_objects.append(o3)
 
     #Starts Objects in correct location
-    o2.set_position([0.5, 0.13, 0.5])
+    # o2.set_position([0.5, 0.13, 0.5])
     o2.set_rotation([math.pi / 2, math.pi/2, 0])
 
-    o3.set_position([0.50, 0.13, 0.50])
+    # o3.set_position([0.50, 0.13, 0.50])
     o3.set_rotation([0, math.pi / 2, 0])
 
     # Camera

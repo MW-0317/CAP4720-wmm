@@ -72,6 +72,7 @@ class Game(Engine):
         self.dice_slider_1 = self.test_gui.add_slider("Dice Roll #1", 1, 6, 1, 1)
         self.dice_slider_2 = self.test_gui.add_slider("Dice Roll #2", 1, 6, 1, 1)
         self.tps_slider = self.test_gui.add_slider("TPS", 1, 120, 60, 1)
+
         self.dice_slider_1.get_value()
         self.dice_slider_2.get_value()
 
@@ -146,21 +147,21 @@ class Game(Engine):
         total_width = 0
         def add_box_bottom():
             nonlocal total_width
-            rect = pg.Rect(total_width, self.height - self.ui_height * self.height_fraction, self.ui_width, self.ui_height * self.height_fraction * 1/2)
+            rect = pg.Rect(total_width, self.height - self.ui_height * self.height_fraction * 1/2, self.ui_width, self.ui_height * self.height_fraction * 1/4)
             total_width += self.ui_width
             return rect
         
         total_width2 = 0
         def add_box_bottom2():
             nonlocal total_width2
-            rect = pg.Rect(total_width2, self.height - self.ui_height * self.height_fraction * 1/2, self.ui_width, self.ui_height * self.height_fraction * 1/2)
+            rect = pg.Rect(total_width2, self.height - self.ui_height * self.height_fraction * 1/4, self.ui_width, self.ui_height * self.height_fraction * 1/4)
             total_width2 += self.ui_width
             return rect
         
         total_width3 = 0
         def add_box_bottom3():
             nonlocal total_width3
-            rect = pg.Rect(total_width3, self.height - self.ui_height * self.height_fraction * 5/4, self.ui_width, self.ui_height * self.height_fraction * 1/4)
+            rect = pg.Rect(total_width3, self.height - self.ui_height * self.height_fraction * 3/4, self.ui_width, self.ui_height * self.height_fraction * 1/4)
             total_width3 += self.ui_width
             return rect
 
@@ -242,7 +243,7 @@ class Game(Engine):
                     side = "Back" if prop[1][2] == 1 else "Front"
                     filenames.append(f"./resources/images/{prop[0]}{side}.png")
                 if empty: return
-                self.guiManager.query_image_select(filenames, 300, 300)
+                self.guiManager.query_image_select(filenames, self.width // 3, self.width // 3)
         self.mortgage_button = self.guiManager.create_button(relative_rect=mortage_rect, text="Mortgage", callback=mortgage)
         self.mortgage_button.hide()
         unmortage_rect = add_box(1/2)
@@ -262,7 +263,7 @@ class Game(Engine):
                     side = "Back" if prop[1][2] == 1 else "Front"
                     filenames.append(f"./resources/images/{prop[0]}{side}.png")
                 if empty: return
-                self.guiManager.query_image_select(filenames, 300, 300)
+                self.guiManager.query_image_select(filenames, self.width // 3, self.width // 3)
         self.unmortgage_button = self.guiManager.create_button(relative_rect=unmortage_rect, text="Unmortgage", callback=unmortgage)
         self.unmortgage_button.hide()
 
@@ -286,7 +287,7 @@ class Game(Engine):
                     side = "Back" if prop[1][2] == 1 else "Front"
                     filenames.append(f"./resources/images/{prop[0]}{side}.png")
                 if empty: return
-                self.guiManager.query_image_select(filenames, 300, 300)
+                self.guiManager.query_image_select(filenames, self.width // 3, self.width // 3)
 
         self.properties_button = self.guiManager.create_button(relative_rect=properties_rect, text="Properties", callback=toggle_prop_buttons)
 
@@ -335,7 +336,7 @@ class Game(Engine):
             if(endingAction == "Next Players Turn"):
                 self.playerturn()
             else:
-                self.guiManager.query_message(endingAction, 300, 300, "YAY!")
+                self.guiManager.query_message(endingAction, self.width // 3, self.width // 3, "YAY!")
         
         if not self.p.should_update_logic and self.p.dice_roll == -1: return
 
@@ -345,7 +346,6 @@ class Game(Engine):
             self.p.buy(self.g, self.current_player, self.action)
 
         if(self.action == "OfferToPayToLeaveJail"):
-            print(self.GUIpayjail())
             if self.GUIpayjail():
                 self.g.leavejail(self.current_player)
                 self.roll_button.show()
@@ -478,7 +478,7 @@ class Game(Engine):
         anim = Animation(card)
 
         # Create Keyframes to raise card from deck
-        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 150)
+        start = Keyframe(pyrr.Vector3([0, 0.015, 0]), 60)
         middle = Keyframe(pyrr.Vector3([0, 0.4, 0]), 0)
         end1 = Keyframe(pyrr.Vector3([0, 0.015, 0]), 0)
 
@@ -557,7 +557,6 @@ class Game(Engine):
 
     def animationSeqeunce(self, end: int, begin: int):
 
-        print(end, begin)
         if(begin > end):
             moves = self.p.dice_roll
             self.animationTree(begin, moves)
@@ -576,9 +575,9 @@ class Game(Engine):
         current = current % 8
         while (i < moves):
             anim = Animation(self.player_objects[player])
-            fromTranslation = pyrr.Vector3(self.positions[current]) * (0.2 * self.current_player + 0.6)
+            fromTranslation = pyrr.Vector3(self.positions[current]) * (0.2 * self.current_player + 0.7)
             fromTranslation.y = self.positions[current][1]
-            toTranslation = pyrr.Vector3(self.positions[(current + 1) % 8]) * (0.2 * self.current_player + 0.6)
+            toTranslation = pyrr.Vector3(self.positions[(current + 1) % 8]) * (0.2 * self.current_player + 0.7)
             toTranslation.y = self.positions[(current + 1) % 8][1]
             anim.translation(fromTranslation, toTranslation, 30)
             anim.rotation(pyrr.Vector3(self.rotations(current // 2)) + pyrr.Vector3(self.rotation_offsets[player]),

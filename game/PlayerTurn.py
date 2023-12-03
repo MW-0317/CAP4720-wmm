@@ -47,7 +47,7 @@ class PlayerTurn:
         #     self.engine.guiManager.query_message(f"You have insufficient funds to buy {location_string_fixed}", 300, 300)
         #     return
         
-        image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", 300, 300, offset=self.engine.guiManager.width // 5)
+        image, _, _ = self.engine.guiManager.query_image(f"resources/images/{prop}Front.png", self.engine.width // 3, self.engine.width // 3, offset=self.engine.guiManager.width // 5)
         def wantsToBuy(confirmed: bool):
             # if confirmed: gamestate.buy_property(player_index, prop)
             image.kill()
@@ -58,7 +58,7 @@ class PlayerTurn:
             self.should_update_logic = True
 
         self.engine.guiManager.query_confirmation(f"Would you like to buy {location_string_fixed} for {prop_price}?", 
-                                                        300, 300, callback=wantsToBuy, offset=self.engine.guiManager.width // 5)
+                                                        self.engine.width // 3, self.engine.width // 3, callback=wantsToBuy, offset=self.engine.guiManager.width // 5)
         
         
     def prompt_jail(self, gamestate: Gamestate, player_index: int):
@@ -73,7 +73,7 @@ class PlayerTurn:
             else:
                 self.engine.roll_button.hide()
 
-        self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", 300, 300, 
+        self.engine.guiManager.query_confirmation(f"How would you like to leave jail?", self.engine.width // 3, self.engine.width // 3, 
                                                   "Pay $50", "No", callback=wantsToPay)
 
     def roll_dice(self, gamestate: Gamestate):
@@ -83,10 +83,9 @@ class PlayerTurn:
             if self.engine.cheat_slider.get_value():
                 self.dice = (self.engine.dice_slider_1.get_value(), self.engine.dice_slider_2.get_value())
             self.dice_roll = self.dice[0] + self.dice[1]
-            print("LastLoc:", gamestate.current_player_list(self.engine.current_player)[1])
             self.engine.roll_button.hide()
 
-        self.engine.guiManager.query_message(f"Would you like to roll the dice?", 300, 300, callback=simulation)
+        self.engine.guiManager.query_message(f"Would you like to roll the dice?", self.engine.width // 3, self.engine.width // 3, callback=simulation)
 
     def buy_house(self, gamestate: Gamestate):
         ...
