@@ -417,17 +417,17 @@ class Gamestate:
             self.updateMoney(currentplayer, -50)
             return "BuildHouseOnAirZandZRental"+str(houseNumber)
 
-        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] < 5)):
+        elif ((properity == 'SuburbanTownHouse') and (self.SuburbanTownHouse[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] < 5)):
             houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -100)
             return "BuildHouseOnSuburbanTownHouse"+str(houseNumber)
 
-        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] < 5)):
+        elif ((properity == 'DownTownStudioApt') and (self.DownTownStudioApt[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] < 5)):
             houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -150)
             return "BuildHouseOnDownTownStudioApt"+str(houseNumber)
 
-        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] < 5)):
+        elif ((properity == 'SkyRiseFlat') and (self.SkyRiseFlat[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] < 5)):
             houseNumber = self.buildhouse(properity)
             self.updateMoney(currentplayer, -200)
             return "BuildHouseOnSkyRiseFlat"+str(houseNumber)
@@ -444,17 +444,17 @@ class Gamestate:
             self.updateMoney(currentplayer, 25)
             return "RemoveHouseOnAirZandZRental"+str(houseNumber)
 
-        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] > 0)):
+        elif ((properity == 'SuburbanTownHouse') and (self.SuburbanTownHouse[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] > 0)):
             houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 50)
             return "RemoveHouseOnSuburbanTownHouse"+str(houseNumber)
 
-        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] > 0)):
+        elif ((properity == 'DownTownStudioApt') and (self.DownTownStudioApt[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] > 0)):
             houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 75)
             return "RemoveHouseOnDownTownStudioApt"+str(houseNumber)
 
-        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] > 0)):
+        elif ((properity == 'SkyRiseFlat') and (self.SkyRiseFlat[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] > 0)):
             houseNumber = self.removehouse(properity)
             self.updateMoney(currentplayer, 100)
             return "RemoveHouseOnSkyRiseFlat"+str(houseNumber)
@@ -502,17 +502,17 @@ class Gamestate:
             self.updateMoney(currentplayer, 150)
             return "Do Nothing"
 
-        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] == 0)):
+        elif ((properity == 'SuburbanTownHouse') and (self.SuburbanTownHouse[0] == currentplayer) and (self.SuburbanTownHouse[2] == 0) and (self.SuburbanTownHouse[1] == 0)):
             self.mortgage(properity)
             self.updateMoney(currentplayer, 225)
             return "Do Nothing"
 
-        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] == 0)):
+        elif ((properity == 'DownTownStudioApt') and (self.DownTownStudioApt[0] == currentplayer) and (self.DownTownStudioApt[2] == 0) and (self.DownTownStudioApt[1] == 0)):
             self.mortgage(properity)
             self.updateMoney(currentplayer, 300)
             return "Do Nothing"
 
-        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] == 0)):
+        elif ((properity == 'SkyRiseFlat') and (self.SkyRiseFlat[0] == currentplayer) and (self.SkyRiseFlat[2] == 0) and (self.SkyRiseFlat[1] == 0)):
             self.mortgage(properity)
             self.updateMoney(currentplayer, 400)
             return "Do Nothing"
@@ -525,17 +525,17 @@ class Gamestate:
             self.updateMoney(currentplayer, -165)
             return "Do Nothing"
 
-        elif ((properity == 'SuburbanTownHouse') and (self.AirZandZRental[0] == currentplayer) and (self.SuburbanTownHouse[2] == 1)):
+        elif ((properity == 'SuburbanTownHouse') and (self.SuburbanTownHouse[0] == currentplayer) and (self.SuburbanTownHouse[2] == 1)):
             self.unmortgage(properity)
             self.updateMoney(currentplayer, -248)
             return "Do Nothing"
 
-        elif ((properity == 'DownTownStudioApt') and (self.AirZandZRental[0] == currentplayer) and (self.DownTownStudioApt[2] == 1)):
+        elif ((properity == 'DownTownStudioApt') and (self.DownTownStudioApt[0] == currentplayer) and (self.DownTownStudioApt[2] == 1)):
             self.unmortgage(properity)
             self.updateMoney(currentplayer, -330)
             return "Do Nothing"
 
-        elif ((properity == 'SkyRiseFlat') and (self.AirZandZRental[0] == currentplayer) and (self.SkyRiseFlat[2] == 1)):
+        elif ((properity == 'SkyRiseFlat') and (self.SkyRiseFlat[0] == currentplayer) and (self.SkyRiseFlat[2] == 1)):
             self.unmortgage(properity)
             self.updateMoney(currentplayer, -440)
             return "Do Nothing"
